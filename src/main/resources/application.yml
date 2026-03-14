@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: moneytrail
+  profiles:
+    active:
+    - dev
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+
+  flyway:
+    enabled: true
