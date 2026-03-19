@@ -1,4 +1,4 @@
-package cc.suvankar.moneytrail;
+package cc.suvankar.moneytrail.user;
 
 import java.util.Optional;
 
@@ -6,9 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import cc.suvankar.moneytrail.user.User;
-import cc.suvankar.moneytrail.user.UserRepository;
 
 @DataJpaTest
 public class UserRepositoryTest {
