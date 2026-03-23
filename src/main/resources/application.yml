@@ -3,7 +3,7 @@ spring:
     name: moneytrail
   profiles:
     active:
-    - dev
+      - dev
 
   jpa:
     hibernate:
@@ -18,3 +18,7 @@ app:
   jwt:
     secret: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION:86400000}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
