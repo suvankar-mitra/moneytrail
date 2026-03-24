@@ -2,7 +2,6 @@ package cc.suvankar.moneytrail.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
-    @NotBlank
-    @Email
+    @NotBlank(message = "Email is required")
+    @Email(regexp = ".+@.+\\..+", message = "Must be a valid email address")
     private String email;
 
-    @NotBlank
-    @Size(min = 8)
+    @NotBlank(message = "Password is required")
     private String password;
 }
