@@ -1,18 +1,22 @@
 package cc.suvankar.moneytrail.tag;
 
+import cc.suvankar.moneytrail.config.JpaConfig;
 import cc.suvankar.moneytrail.user.User;
 import cc.suvankar.moneytrail.user.UserRepository;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DataJpaTest
+@Import(JpaConfig.class)
 public class TagRepositoryTest {
 
     private User user;
