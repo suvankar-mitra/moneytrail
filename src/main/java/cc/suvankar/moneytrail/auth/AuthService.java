@@ -33,8 +33,7 @@ public class AuthService {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             log.warn("Email {} is already present.", registerRequest.getEmail());
 
-            throw new EmailAlreadyExistsException("The requested email "
-                    + registerRequest.getEmail() + " is already present");
+            throw new EmailAlreadyExistsException("The requested email is already in use.");
         }
 
         User user = new User();
@@ -56,13 +55,13 @@ public class AuthService {
         User foundUser = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> {
                     log.warn("User with email {} does not exist.", loginRequest.getEmail());
-                    return new InvalidCredentialsException("Invalid credential for email " + loginRequest.getEmail() + ".");
+                    return new InvalidCredentialsException("Invalid credentials.");
                 });
 
         if (!passwordEncoder.matches(loginRequest.getPassword(),
                 foundUser.getPasswordHash())) {
             log.warn("Password hash for email {} does not match.", loginRequest.getEmail());
-            throw new InvalidCredentialsException("Invalid credential for email " + loginRequest.getEmail() + ".");
+            throw new InvalidCredentialsException("Invalid credentials.");
         }
 
         // User exists and password hash matches
