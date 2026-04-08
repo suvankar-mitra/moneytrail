@@ -65,7 +65,7 @@ public class AuthService {
         }
 
         // User exists and password hash matches
-        String token = jwtUtil.generateToken(foundUser.getEmail());
+        String token = jwtUtil.generateTokenWithUserId(foundUser.getEmail(), foundUser.getId());
 
         // Return the response
         AuthResponse authResponse = new AuthResponse();
