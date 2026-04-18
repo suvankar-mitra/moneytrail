@@ -15,10 +15,6 @@ public class ContactService {
         this.contactRepository = contactRepository;
     }
 
-    public Contact getContactReferenceById(UUID id) {
-        return contactRepository.getReferenceById(id);
-    }
-
     public Contact getContact(UUID userId, UUID contactId) {
         return contactRepository.findByUserIdAndId(userId, contactId)
                 .orElseThrow(ResourceNotFoundException::forContact);
