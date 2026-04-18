@@ -17,7 +17,7 @@ public class AccountResponse {
     private UUID accountId;
     private UUID contactId;
     private String name;
-    private AccountType type;
+    private AccountType accountType;
     private String currency;
     private boolean virtual;
     private OffsetDateTime createdAt;
