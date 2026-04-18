@@ -2,10 +2,10 @@ package cc.suvankar.moneytrail.account;
 
 import cc.suvankar.moneytrail.account.dto.AccountRequest;
 import cc.suvankar.moneytrail.account.dto.AccountResponse;
-import cc.suvankar.moneytrail.contact.ContactRepository;
+import cc.suvankar.moneytrail.contact.ContactService;
 import cc.suvankar.moneytrail.exception.BadRequestException;
 import cc.suvankar.moneytrail.exception.ResourceNotFoundException;
-import cc.suvankar.moneytrail.user.UserRepository;
+import cc.suvankar.moneytrail.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +17,15 @@ import java.util.UUID;
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final ContactRepository contactRepository;
-    private final UserRepository userRepository;
+    private final ContactService contactService;
+    private final UserService userService;
 
     public AccountService(AccountRepository accountRepository,
-                          ContactRepository contactRepository,
-                          UserRepository userRepository) {
+                          ContactService contactService,
+                          UserService userService) {
         this.accountRepository = accountRepository;
-        this.contactRepository = contactRepository;
-        this.userRepository = userRepository;
+        this.contactService = contactService;
+        this.userService = userService;
     }
 
     private AccountResponse getAccountResponse(Account account) {
@@ -39,7 +39,7 @@ public class AccountService {
             }
             response.setContactId(account.getContact().getId());
         }
-        response.setType(account.getType());
+        response.setAccountType(account.getType());
         response.setCurrency(account.getCurrency());
         response.setVirtual(account.isVirtual());
         response.setUpdatedAt(account.getUpdatedAt());
@@ -55,7 +55,7 @@ public class AccountService {
     }
 
     public AccountResponse createAccount(UUID userId, AccountRequest accountRequest) {
-        var user = userRepository.getReferenceById(userId);
+        var user = userService.getUserReferenceById(userId);
 
         Account account = new Account();
         account.setUser(user);
@@ -69,8 +69,7 @@ public class AccountService {
             if (accountRequest.getContactId() == null) {
                 throw new BadRequestException("Contact ID missing.");
             }
-            var contact = contactRepository.findById(accountRequest.getContactId())
-                    .orElseThrow(ResourceNotFoundException::forContact);
+            var contact = contactService.getContact(user.getId(), accountRequest.getContactId());
             account.setContact(contact);
         }
 
@@ -78,7 +77,8 @@ public class AccountService {
 
         var response = getAccountResponse(account);
 
-        log.info("Created new account {}, {} of type {}", response.getAccountId(), response.getName(), response.getType());
+        log.info("Created new account {}, {} of type {}", response.getAccountId(),
+                response.getName(), response.getAccountType());
 
         return response;
     }
@@ -112,8 +112,7 @@ public class AccountService {
             if (updatedAccount.getContactId() == null) {
                 throw new BadRequestException("Contact ID missing.");
             }
-            var contact = contactRepository.findById(updatedAccount.getContactId())
-                    .orElseThrow(ResourceNotFoundException::forContact);
+            var contact = contactService.getContact(userId, updatedAccount.getContactId());
             account.setContact(contact);
         }
         account.setType(updatedAccount.getAccountType());
