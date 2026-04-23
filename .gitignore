@@ -34,3 +34,6 @@ build/
 
 ### Dev properties ###
 src/main/resources/application-dev.yml
+
+### MacOS ###
+.DS_STORE

@@ -1,18 +1,27 @@
 package cc.suvankar.moneytrail.account;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import cc.suvankar.moneytrail.account.dto.AccountRequest;
 import cc.suvankar.moneytrail.account.dto.AccountResponse;
 import cc.suvankar.moneytrail.user.UserPrincipal;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -26,7 +35,8 @@ public class AccountController {
     }
 
     @GetMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<AccountResponse>> getAccounts(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<List<AccountResponse>> getAccounts(
+            @NonNull @AuthenticationPrincipal UserPrincipal userPrincipal) {
         var userId = userPrincipal.getUserId();
 
         log.info("Getting all accounts for User {}", userId);
@@ -36,7 +46,7 @@ public class AccountController {
 
     @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountResponse> createAccount(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                                         @Valid @RequestBody AccountRequest accountRequest) {
+            @NonNull @Valid @RequestBody AccountRequest accountRequest) {
         var userId = userPrincipal.getUserId();
 
         log.info("Creating account for User {}", userId);
@@ -47,8 +57,8 @@ public class AccountController {
     }
 
     @GetMapping(value = "/accounts/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountResponse> getAccount(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                                      @PathVariable("id") UUID accountId) {
+    public ResponseEntity<AccountResponse> getAccount(@NonNull @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @NonNull @PathVariable("id") UUID accountId) {
         var userId = userPrincipal.getUserId();
 
         log.info("Getting account for User {} with ID {}", userId, accountId);
@@ -57,9 +67,9 @@ public class AccountController {
     }
 
     @PutMapping(value = "/accounts/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountResponse> updateAccount(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                                         @PathVariable("id") UUID accountId,
-                                                         @Valid @RequestBody AccountRequest accountRequest) {
+    public ResponseEntity<AccountResponse> updateAccount(@NonNull @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @NonNull @PathVariable("id") UUID accountId,
+            @NonNull @Valid @RequestBody AccountRequest accountRequest) {
         var userId = userPrincipal.getUserId();
 
         log.info("Updating account {} for User {}", accountId, userId);
@@ -69,8 +79,8 @@ public class AccountController {
     }
 
     @DeleteMapping(value = "/accounts/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                              @PathVariable("id") UUID accountId) {
+    public ResponseEntity<Void> deleteAccount(@NonNull @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @NonNull @PathVariable("id") UUID accountId) {
         var userId = userPrincipal.getUserId();
 
         log.info("Deleting account {} for User {}", accountId, userId);

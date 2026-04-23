@@ -1,8 +1,9 @@
 package cc.suvankar.moneytrail.user;
 
-import org.springframework.stereotype.Service;
-
 import java.util.UUID;
+
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
@@ -12,7 +13,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User getUserReferenceById(UUID id) {
+    public User getUserReferenceById(@NonNull UUID id) {
         return userRepository.getReferenceById(id);
     }
 }

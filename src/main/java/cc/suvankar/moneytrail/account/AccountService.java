@@ -1,5 +1,11 @@
 package cc.suvankar.moneytrail.account;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+
 import cc.suvankar.moneytrail.account.dto.AccountRequest;
 import cc.suvankar.moneytrail.account.dto.AccountResponse;
 import cc.suvankar.moneytrail.contact.ContactService;
@@ -7,10 +13,6 @@ import cc.suvankar.moneytrail.exception.BadRequestException;
 import cc.suvankar.moneytrail.exception.ResourceNotFoundException;
 import cc.suvankar.moneytrail.user.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -21,8 +23,8 @@ public class AccountService {
     private final UserService userService;
 
     public AccountService(AccountRepository accountRepository,
-                          ContactService contactService,
-                          UserService userService) {
+            ContactService contactService,
+            UserService userService) {
         this.accountRepository = accountRepository;
         this.contactService = contactService;
         this.userService = userService;
@@ -48,13 +50,13 @@ public class AccountService {
         return response;
     }
 
-    public List<AccountResponse> getAccounts(UUID userId) {
+    public List<AccountResponse> getAccounts(@NonNull UUID userId) {
         var accounts = accountRepository.findByUserId(userId);
 
         return accounts.stream().map(this::getAccountResponse).toList();
     }
 
-    public AccountResponse createAccount(UUID userId, AccountRequest accountRequest) {
+    public AccountResponse createAccount(@NonNull UUID userId, @NonNull AccountRequest accountRequest) {
         var user = userService.getUserReferenceById(userId);
 
         Account account = new Account();
@@ -83,7 +85,7 @@ public class AccountService {
         return response;
     }
 
-    public AccountResponse getAccount(UUID userId, UUID accountId) {
+    public AccountResponse getAccount(@NonNull UUID userId, @NonNull UUID accountId) {
         var account = accountRepository
                 .findById(accountId).orElseThrow(ResourceNotFoundException::forAccount);
 
@@ -98,7 +100,8 @@ public class AccountService {
 
     }
 
-    public AccountResponse updateAccount(UUID userId, UUID accountId, AccountRequest updatedAccount) {
+    public AccountResponse updateAccount(@NonNull UUID userId, @NonNull UUID accountId,
+            @NonNull AccountRequest updatedAccount) {
         var account = accountRepository
                 .findById(accountId).orElseThrow(ResourceNotFoundException::forAccount);
 
@@ -127,7 +130,7 @@ public class AccountService {
         return getAccountResponse(account);
     }
 
-    public void deleteAccount(UUID userId, UUID accountId) {
+    public void deleteAccount(@NonNull UUID userId, @NonNull UUID accountId) {
         var account = accountRepository
                 .findById(accountId).orElseThrow(ResourceNotFoundException::forAccount);
 
