@@ -12,10 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
-    @NotBlank(message = "Email is required")
-    @Email(regexp = ".+@.+\\..+", message = "Must be a valid email address")
-    private String email;
+  @NotBlank(message = "Email is required")
+  @Email(regexp = ".+@.+\\..+", message = "Must be a valid email address")
+  private String email;
 
-    @NotBlank(message = "Password is required")
-    private String password;
+  @NotBlank(message = "Password is required")
+  private String password;
 }

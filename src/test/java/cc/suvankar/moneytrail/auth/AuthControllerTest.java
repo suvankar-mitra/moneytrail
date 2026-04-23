@@ -1,5 +1,11 @@
 package cc.suvankar.moneytrail.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import cc.suvankar.moneytrail.auth.dto.AuthResponse;
 import cc.suvankar.moneytrail.auth.exception.EmailAlreadyExistsException;
 import cc.suvankar.moneytrail.auth.exception.InvalidCredentialsException;
@@ -17,36 +23,31 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@WebMvcTest(controllers = AuthController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtFilter.class))
+@WebMvcTest(
+    controllers = AuthController.class,
+    excludeFilters =
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtFilter.class))
 @AutoConfigureMockMvc(addFilters = false)
 public class AuthControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @MockitoBean
-    private AuthService authService;
+  @MockitoBean private AuthService authService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-    @BeforeEach
-    void setup() {
-        objectMapper.registerModule(new JavaTimeModule());
-    }
+  @BeforeEach
+  void setup() {
+    objectMapper.registerModule(new JavaTimeModule());
+  }
 
-    private final static String registerBaseUrl = "/api/v1/auth/register";
-    private final static String loginBaseUrl = "/api/v1/auth/login";
+  private static final String registerBaseUrl = "/api/v1/auth/register";
+  private static final String loginBaseUrl = "/api/v1/auth/login";
 
-    @Test
-    void register_shouldReturn201_whenValidRequest() throws Exception {
-        String validJsonRequest = """
+  @Test
+  void register_shouldReturn201_whenValidRequest() throws Exception {
+    String validJsonRequest =
+        """
                 {
                     "name": "John Doe",
                     "email": "john@example.com",
@@ -54,17 +55,18 @@ public class AuthControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post(registerBaseUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validJsonRequest))
-                .andExpect(status().isCreated());
+    mockMvc
+        .perform(
+            post(registerBaseUrl).contentType(MediaType.APPLICATION_JSON).content(validJsonRequest))
+        .andExpect(status().isCreated());
 
-        verify(authService, times(1)).registerUser(any());
-    }
+    verify(authService, times(1)).registerUser(any());
+  }
 
-    @Test
-    void register_shouldReturn400_whenEmailIsMalformed() throws Exception {
-        String invalidJsonRequest = """
+  @Test
+  void register_shouldReturn400_whenEmailIsMalformed() throws Exception {
+    String invalidJsonRequest =
+        """
                 {
                     "name": "John Doe",
                     "email": "john#exampe_com",
@@ -72,20 +74,24 @@ public class AuthControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post(registerBaseUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalidJsonRequest))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> {
-                    var json = result.getResponse().getContentAsString();
-                    var errorResponse = objectMapper.readValue(json, ErrorResponse.class);
-                    assertThat(errorResponse.getMessage()).contains("Must be a valid email address");
-                });
-    }
+    mockMvc
+        .perform(
+            post(registerBaseUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJsonRequest))
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result -> {
+              var json = result.getResponse().getContentAsString();
+              var errorResponse = objectMapper.readValue(json, ErrorResponse.class);
+              assertThat(errorResponse.getMessage()).contains("Must be a valid email address");
+            });
+  }
 
-    @Test
-    void register_shouldReturn409_whenEmailAlreadyExists() throws Exception {
-        String invalidJsonRequest = """
+  @Test
+  void register_shouldReturn409_whenEmailAlreadyExists() throws Exception {
+    String invalidJsonRequest =
+        """
                 {
                     "name": "John Doe",
                     "email": "john@exampe.com",
@@ -93,61 +99,71 @@ public class AuthControllerTest {
                 }
                 """;
 
-        doThrow(new EmailAlreadyExistsException("The requested email is already in use.")).when(authService).registerUser(any());
+    doThrow(new EmailAlreadyExistsException("The requested email is already in use."))
+        .when(authService)
+        .registerUser(any());
 
-        mockMvc.perform(post(registerBaseUrl).contentType(MediaType.APPLICATION_JSON).content(invalidJsonRequest))
-                .andExpect(status().isConflict())
-                .andExpect(result -> {
-                    var json = result.getResponse().getContentAsString();
-                    var errorResponse = objectMapper.readValue(json, ErrorResponse.class);
-                    assertThat(errorResponse.getMessage()).isEqualTo("The requested email is already in use.");
-                });
+    mockMvc
+        .perform(
+            post(registerBaseUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJsonRequest))
+        .andExpect(status().isConflict())
+        .andExpect(
+            result -> {
+              var json = result.getResponse().getContentAsString();
+              var errorResponse = objectMapper.readValue(json, ErrorResponse.class);
+              assertThat(errorResponse.getMessage())
+                  .isEqualTo("The requested email is already in use.");
+            });
+  }
 
-    }
-
-    @Test
-    void login_shouldReturn200AndJwtToken_whenCredentialIsValid() throws Exception {
-        var validJson = """
+  @Test
+  void login_shouldReturn200AndJwtToken_whenCredentialIsValid() throws Exception {
+    var validJson =
+        """
                 {
                     "email": "john@exampe.com",
                     "password": "password123"
                 }
                 """;
 
-        when(authService.loginUser(any())).thenReturn(new AuthResponse("dummy-jwt-token"));
+    when(authService.loginUser(any())).thenReturn(new AuthResponse("dummy-jwt-token"));
 
-        mockMvc.perform(post(loginBaseUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validJson))
-                .andExpect(status().isOk())
-                .andExpect(result -> {
-                    var json = result.getResponse().getContentAsString();
-                    var authResponse = objectMapper.readValue(json, AuthResponse.class);
+    mockMvc
+        .perform(post(loginBaseUrl).contentType(MediaType.APPLICATION_JSON).content(validJson))
+        .andExpect(status().isOk())
+        .andExpect(
+            result -> {
+              var json = result.getResponse().getContentAsString();
+              var authResponse = objectMapper.readValue(json, AuthResponse.class);
 
-                    assertThat(authResponse.getToken()).isEqualTo("dummy-jwt-token");
-                });
-    }
+              assertThat(authResponse.getToken()).isEqualTo("dummy-jwt-token");
+            });
+  }
 
-    @Test
-    void login_shouldReturn401_whenCredentialIsInvalid() throws Exception {
-        var invalidCredJson = """
+  @Test
+  void login_shouldReturn401_whenCredentialIsInvalid() throws Exception {
+    var invalidCredJson =
+        """
                 {
                     "email": "john@exampe.com",
                     "password": "password123"
                 }
                 """;
 
-        when(authService.loginUser(any())).thenThrow(new InvalidCredentialsException("Invalid credentials."));
+    when(authService.loginUser(any()))
+        .thenThrow(new InvalidCredentialsException("Invalid credentials."));
 
-        mockMvc.perform(post(loginBaseUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalidCredJson))
-                .andExpect(status().isUnauthorized())
-                .andExpect(result -> {
-                    var json = result.getResponse().getContentAsString();
-                    var errorResponse = objectMapper.readValue(json, ErrorResponse.class);
-                    assertThat(errorResponse.getMessage()).isEqualTo("Invalid credentials.");
-                });
-    }
-
+    mockMvc
+        .perform(
+            post(loginBaseUrl).contentType(MediaType.APPLICATION_JSON).content(invalidCredJson))
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> {
+              var json = result.getResponse().getContentAsString();
+              var errorResponse = objectMapper.readValue(json, ErrorResponse.class);
+              assertThat(errorResponse.getMessage()).isEqualTo("Invalid credentials.");
+            });
+  }
 }

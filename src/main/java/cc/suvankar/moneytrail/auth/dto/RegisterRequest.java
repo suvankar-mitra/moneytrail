@@ -13,14 +13,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterRequest {
-    @NotBlank(message = "Name is required")
-    private String name;
+  @NotBlank(message = "Name is required")
+  private String name;
 
-    @Email(regexp = ".+@.+\\..+", message = "Must be a valid email address")
-    @NotBlank(message = "Email is required")
-    private String email;
+  @Email(regexp = ".+@.+\\..+", message = "Must be a valid email address")
+  @NotBlank(message = "Email is required")
+  private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Minimum password length is 8")
-    private String password;
+  @NotBlank(message = "Password is required")
+  @Size(min = 8, message = "Minimum password length is 8")
+  private String password;
 }

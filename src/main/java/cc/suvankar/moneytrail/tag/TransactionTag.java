@@ -21,33 +21,31 @@ import lombok.Setter;
 @Table(name = "transaction_tags")
 public class TransactionTag {
 
-    @EmbeddedId
-    private TransactionTagId transactionTagId;
+  @EmbeddedId private TransactionTagId transactionTagId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("transactionId")
-    @JoinColumn(name = "transaction_id", nullable = false)
-    private Transaction transaction;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @MapsId("transactionId")
+  @JoinColumn(name = "transaction_id", nullable = false)
+  private Transaction transaction;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("tagId")
-    @JoinColumn(name = "tag_id", nullable = false)
-    private Tag tag;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @MapsId("tagId")
+  @JoinColumn(name = "tag_id", nullable = false)
+  private Tag tag;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (transactionTagId == null) {
-            return false;
-        }
-        if (obj instanceof TransactionTag other) {
-            return other.transactionTagId.equals(transactionTagId);
-        }
-        return false;
+  @Override
+  public boolean equals(Object obj) {
+    if (transactionTagId == null) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        return transactionTagId.hashCode();
+    if (obj instanceof TransactionTag other) {
+      return other.transactionTagId.equals(transactionTagId);
     }
+    return false;
+  }
 
+  @Override
+  public int hashCode() {
+    return transactionTagId.hashCode();
+  }
 }

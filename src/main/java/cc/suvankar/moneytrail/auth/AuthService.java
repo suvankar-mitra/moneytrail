@@ -15,62 +15,64 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final JwtUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
+  public AuthService(
+      UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.jwtUtil = jwtUtil;
+  }
+
+  public void registerUser(RegisterRequest registerRequest) {
+
+    // Check if email already exists
+    if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+      log.warn("Email {} is already present.", registerRequest.getEmail());
+
+      throw new EmailAlreadyExistsException("The requested email is already in use.");
     }
 
-    public void registerUser(RegisterRequest registerRequest) {
+    User user = new User();
+    user.setEmail(registerRequest.getEmail());
+    user.setName(registerRequest.getName());
+    user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
 
-        // Check if email already exists
-        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            log.warn("Email {} is already present.", registerRequest.getEmail());
+    // Save user to DB
+    userRepository.save(user);
 
-            throw new EmailAlreadyExistsException("The requested email is already in use.");
-        }
+    log.info(
+        "Successfully registered User [name: {}, email: {}]",
+        registerRequest.getName(),
+        registerRequest.getEmail());
+  }
 
-        User user = new User();
-        user.setEmail(registerRequest.getEmail());
-        user.setName(registerRequest.getName());
-        user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
+  public AuthResponse loginUser(LoginRequest loginRequest) {
 
-        // Save user to DB
-        userRepository.save(user);
-
-        log.info("Successfully registered User [name: {}, email: {}]",
-                registerRequest.getName(), registerRequest.getEmail());
-
-    }
-
-    public AuthResponse loginUser(LoginRequest loginRequest) {
-
-        // Find user by email
-        User foundUser = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> {
-                    log.warn("User with email {} does not exist.", loginRequest.getEmail());
-                    return new InvalidCredentialsException("Invalid credentials.");
+    // Find user by email
+    User foundUser =
+        userRepository
+            .findByEmail(loginRequest.getEmail())
+            .orElseThrow(
+                () -> {
+                  log.warn("User with email {} does not exist.", loginRequest.getEmail());
+                  return new InvalidCredentialsException("Invalid credentials.");
                 });
 
-        if (!passwordEncoder.matches(loginRequest.getPassword(),
-                foundUser.getPasswordHash())) {
-            log.warn("Password hash for email {} does not match.", loginRequest.getEmail());
-            throw new InvalidCredentialsException("Invalid credentials.");
-        }
-
-        // User exists and password hash matches
-        String token = jwtUtil.generateTokenWithUserId(foundUser.getEmail(), foundUser.getId());
-
-        // Return the response
-        AuthResponse authResponse = new AuthResponse();
-        authResponse.setToken(token);
-
-        return authResponse;
+    if (!passwordEncoder.matches(loginRequest.getPassword(), foundUser.getPasswordHash())) {
+      log.warn("Password hash for email {} does not match.", loginRequest.getEmail());
+      throw new InvalidCredentialsException("Invalid credentials.");
     }
+
+    // User exists and password hash matches
+    String token = jwtUtil.generateTokenWithUserId(foundUser.getEmail(), foundUser.getId());
+
+    // Return the response
+    AuthResponse authResponse = new AuthResponse();
+    authResponse.setToken(token);
+
+    return authResponse;
+  }
 }
