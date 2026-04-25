@@ -1,5 +1,7 @@
 # MoneyTrail
 
+![Java CI with Maven](https://github.com/suvankar-mitra/moneytrail/actions/workflows/maven.yml/badge.svg)
+
 MoneyTrail is a self-hosted personal finance application built with Java and Spring Boot.
 It models all money movement as transfers between accounts — income, expenses, investments,
 loans, and lending to external contacts — using a double-entry bookkeeping system.
