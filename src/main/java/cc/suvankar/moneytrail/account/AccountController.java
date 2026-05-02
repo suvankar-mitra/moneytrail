@@ -39,7 +39,7 @@ public class AccountController {
 
     log.info("Getting all accounts for User {}", userId);
 
-    return ResponseEntity.ok(accountService.getAccounts(userId));
+    return ResponseEntity.ok(accountService.getAccountsByUserId(userId));
   }
 
   @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)

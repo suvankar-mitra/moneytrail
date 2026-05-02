@@ -27,7 +27,7 @@ public class AccountService {
     this.userService = userService;
   }
 
-  private AccountResponse getAccountResponse(Account account) {
+  private AccountResponse toAccountResponse(Account account) {
     AccountResponse response = new AccountResponse();
     response.setAccountId(account.getId());
     response.setCreatedAt(account.getCreatedAt());
@@ -46,10 +46,10 @@ public class AccountService {
     return response;
   }
 
-  public List<AccountResponse> getAccounts(@NonNull UUID userId) {
+  public List<AccountResponse> getAccountsByUserId(@NonNull UUID userId) {
     var accounts = accountRepository.findByUserId(userId);
 
-    return accounts.stream().map(this::getAccountResponse).toList();
+    return accounts.stream().map(this::toAccountResponse).toList();
   }
 
   public AccountResponse createAccount(
@@ -74,7 +74,7 @@ public class AccountService {
 
     accountRepository.save(account);
 
-    var response = getAccountResponse(account);
+    var response = toAccountResponse(account);
 
     log.info(
         "Created new account {}, {} of type {}",
@@ -91,7 +91,7 @@ public class AccountService {
 
     if (account.getUser().getId().equals(userId)) {
       log.info("Found account {} for user {}", accountId, userId);
-      return getAccountResponse(account);
+      return toAccountResponse(account);
     }
 
     log.info("Account {} does not belong to user {}", accountId, userId);
@@ -100,7 +100,7 @@ public class AccountService {
   }
 
   public AccountResponse updateAccount(
-      @NonNull UUID userId, @NonNull UUID accountId, @NonNull AccountRequest updatedAccount) {
+      @NonNull UUID userId, @NonNull UUID accountId, @NonNull AccountRequest accountRequest) {
     var account =
         accountRepository.findById(accountId).orElseThrow(ResourceNotFoundException::forAccount);
 
@@ -109,24 +109,24 @@ public class AccountService {
     }
 
     // Update fields
-    if (updatedAccount.getAccountType() == AccountType.RECEIVABLE
-        || updatedAccount.getAccountType() == AccountType.PAYABLE) {
-      if (updatedAccount.getContactId() == null) {
+    if (accountRequest.getAccountType() == AccountType.RECEIVABLE
+        || accountRequest.getAccountType() == AccountType.PAYABLE) {
+      if (accountRequest.getContactId() == null) {
         throw new BadRequestException("Contact ID missing.");
       }
-      var contact = contactService.getContact(userId, updatedAccount.getContactId());
+      var contact = contactService.getContact(userId, accountRequest.getContactId());
       account.setContact(contact);
     }
-    account.setType(updatedAccount.getAccountType());
-    account.setCurrency(updatedAccount.getCurrency());
-    account.setVirtual(updatedAccount.isVirtual());
-    account.setName(updatedAccount.getName());
+    account.setType(accountRequest.getAccountType());
+    account.setCurrency(accountRequest.getCurrency());
+    account.setVirtual(accountRequest.isVirtual());
+    account.setName(accountRequest.getName());
 
     accountRepository.save(account);
 
     log.info("Updated account {}", accountId);
 
-    return getAccountResponse(account);
+    return toAccountResponse(account);
   }
 
   public void deleteAccount(@NonNull UUID userId, @NonNull UUID accountId) {
