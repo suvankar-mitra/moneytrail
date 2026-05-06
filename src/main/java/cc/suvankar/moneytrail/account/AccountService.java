@@ -4,7 +4,9 @@ import cc.suvankar.moneytrail.account.dto.AccountRequest;
 import cc.suvankar.moneytrail.account.dto.AccountResponse;
 import cc.suvankar.moneytrail.contact.ContactService;
 import cc.suvankar.moneytrail.exception.BadRequestException;
+import cc.suvankar.moneytrail.exception.InvalidCredentialsException;
 import cc.suvankar.moneytrail.exception.ResourceNotFoundException;
+import cc.suvankar.moneytrail.user.User;
 import cc.suvankar.moneytrail.user.UserService;
 import java.util.List;
 import java.util.UUID;
@@ -54,7 +56,12 @@ public class AccountService {
 
   public AccountResponse createAccount(
       @NonNull UUID userId, @NonNull AccountRequest accountRequest) {
-    var user = userService.getUserReferenceById(userId);
+    User user;
+    try {
+      user = userService.getUserById(userId);
+    } catch(ResourceNotFoundException ex) {
+      throw new InvalidCredentialsException("Invalid credential");
+    }
 
     Account account = new Account();
     account.setUser(user);
