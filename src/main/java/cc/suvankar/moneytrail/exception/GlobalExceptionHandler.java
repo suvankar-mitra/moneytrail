@@ -1,7 +1,5 @@
 package cc.suvankar.moneytrail.exception;
 
-import cc.suvankar.moneytrail.auth.exception.EmailAlreadyExistsException;
-import cc.suvankar.moneytrail.auth.exception.InvalidCredentialsException;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;

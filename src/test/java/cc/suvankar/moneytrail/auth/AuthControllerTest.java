@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import cc.suvankar.moneytrail.auth.dto.AuthResponse;
-import cc.suvankar.moneytrail.auth.exception.EmailAlreadyExistsException;
-import cc.suvankar.moneytrail.auth.exception.InvalidCredentialsException;
+import cc.suvankar.moneytrail.exception.EmailAlreadyExistsException;
+import cc.suvankar.moneytrail.exception.InvalidCredentialsException;
 import cc.suvankar.moneytrail.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

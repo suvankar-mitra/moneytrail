@@ -1,4 +1,4 @@
-package cc.suvankar.moneytrail.auth.exception;
+package cc.suvankar.moneytrail.exception;
 
 public class EmailAlreadyExistsException extends RuntimeException {
   public EmailAlreadyExistsException(String message) {
