@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import cc.suvankar.moneytrail.account.dto.AccountResponse;
+import cc.suvankar.moneytrail.auth.JwtUtil;
 import cc.suvankar.moneytrail.auth.dto.AuthResponse;
 import cc.suvankar.moneytrail.contact.Contact;
 import cc.suvankar.moneytrail.contact.ContactRepository;
@@ -42,6 +43,7 @@ public class AccountControllerIT {
   @Autowired private MockMvc mockMvc;
   @Autowired private PasswordEncoder passwordEncoder;
   @Autowired private ObjectMapper objectMapper;
+  @Autowired private JwtUtil jwtUtil;
 
   private String user1Token;
   private String user2Token;
@@ -230,6 +232,31 @@ public class AccountControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @Transactional
+  public void createAccount_shouldFail_whenValidJWTOfNonexistingUser() throws Exception {
+    String json =
+        """
+                {
+                  "contactId": null,
+                  "name": "Test",
+                  "accountType": "ASSET",
+                  "currency": "INR",
+                  "virtual": false
+                }
+                """;
+
+    String token = jwtUtil.generateTokenWithUserId("random@example.com", UUID.randomUUID());
+
+    mockMvc
+        .perform(
+            post("/api/v1/accounts")
+                .header("Authorization", "Bearer " + token )
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+        .andExpect(status().isUnauthorized());
   }
 
   @Test
