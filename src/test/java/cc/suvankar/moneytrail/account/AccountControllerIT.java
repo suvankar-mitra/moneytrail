@@ -253,7 +253,7 @@ public class AccountControllerIT {
     mockMvc
         .perform(
             post("/api/v1/accounts")
-                .header("Authorization", "Bearer " + token )
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
         .andExpect(status().isUnauthorized());
