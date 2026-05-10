@@ -2,7 +2,9 @@ package cc.suvankar.moneytrail.contact
 
 import cc.suvankar.moneytrail.contact.dto.ContactRequest
 import cc.suvankar.moneytrail.contact.dto.ContactResponse
+import cc.suvankar.moneytrail.exception.InvalidCredentialsException
 import cc.suvankar.moneytrail.exception.ResourceNotFoundException
+import cc.suvankar.moneytrail.user.User
 import cc.suvankar.moneytrail.user.UserService
 import java.util.UUID
 import org.slf4j.LoggerFactory
@@ -21,14 +23,26 @@ class ContactService(
       .orElseThrow(ResourceNotFoundException::forContact)
   }
 
+  fun getContactResponse(userId: UUID, contactId: UUID): ContactResponse {
+    return ContactResponse.from(getContact(userId, contactId))
+  }
+
   fun getContactsByUserId(userId: UUID): List<ContactResponse> {
     return contactRepository.findByUserId(userId = userId).map(ContactResponse::from)
   }
 
   fun createContact(userId: UUID, request: ContactRequest): ContactResponse {
+    var user: User?
+
+    try {
+      user = userService.getUserById(userId)
+    } catch (_: ResourceNotFoundException) {
+      throw InvalidCredentialsException("Invalid credential")
+    }
+
     val contact =
       Contact(
-        user = userService.getUserReferenceById(userId),
+        user = user,
         name = request.name,
         email = request.email,
         phoneNo = request.phoneNo,
