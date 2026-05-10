@@ -66,6 +66,8 @@ class ContactService(
     contact.phoneNo = request.phoneNo
     contact.notes = request.notes
 
+    contactRepository.save(contact)
+
     log.info("Updating contact {} for user {}", contactId, userId)
 
     return ContactResponse.from(contact)
