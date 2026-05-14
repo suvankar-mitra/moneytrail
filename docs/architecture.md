@@ -44,7 +44,7 @@ every controller in the app.
 This approach makes it easy to reason about a feature in isolation, and scales well as the app grows.
 
 ```
-com.moneytrail
+cc.suvankar.moneytrail
 │
 ├── user/
 │   ├── User.java                  (entity)

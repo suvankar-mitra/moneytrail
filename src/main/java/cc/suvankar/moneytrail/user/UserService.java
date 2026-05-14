@@ -1,8 +1,7 @@
 package cc.suvankar.moneytrail.user;
 
-import java.util.UUID;
-
 import cc.suvankar.moneytrail.exception.ResourceNotFoundException;
+import java.util.UUID;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 

@@ -35,7 +35,7 @@ public class AccountController {
   @GetMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<AccountResponse>> getAccounts(
       @NonNull @AuthenticationPrincipal UserPrincipal userPrincipal) {
-    var userId = userPrincipal.getUserId();
+    var userId = userPrincipal.userId();
 
     log.info("Getting all accounts for User {}", userId);
 
@@ -46,7 +46,7 @@ public class AccountController {
   public ResponseEntity<AccountResponse> createAccount(
       @AuthenticationPrincipal UserPrincipal userPrincipal,
       @NonNull @Valid @RequestBody AccountRequest accountRequest) {
-    var userId = userPrincipal.getUserId();
+    var userId = userPrincipal.userId();
 
     log.info("Creating account for User {}", userId);
 
@@ -58,7 +58,7 @@ public class AccountController {
   public ResponseEntity<AccountResponse> getAccount(
       @NonNull @AuthenticationPrincipal UserPrincipal userPrincipal,
       @NonNull @PathVariable("id") UUID accountId) {
-    var userId = userPrincipal.getUserId();
+    var userId = userPrincipal.userId();
 
     log.info("Getting account for User {} with ID {}", userId, accountId);
 
@@ -70,7 +70,7 @@ public class AccountController {
       @NonNull @AuthenticationPrincipal UserPrincipal userPrincipal,
       @NonNull @PathVariable("id") UUID accountId,
       @NonNull @Valid @RequestBody AccountRequest accountRequest) {
-    var userId = userPrincipal.getUserId();
+    var userId = userPrincipal.userId();
 
     log.info("Updating account {} for User {}", accountId, userId);
 
@@ -82,7 +82,7 @@ public class AccountController {
   public ResponseEntity<Void> deleteAccount(
       @NonNull @AuthenticationPrincipal UserPrincipal userPrincipal,
       @NonNull @PathVariable("id") UUID accountId) {
-    var userId = userPrincipal.getUserId();
+    var userId = userPrincipal.userId();
 
     log.info("Deleting account {} for User {}", accountId, userId);
 

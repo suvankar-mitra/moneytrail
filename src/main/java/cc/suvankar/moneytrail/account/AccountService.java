@@ -59,7 +59,7 @@ public class AccountService {
     User user;
     try {
       user = userService.getUserById(userId);
-    } catch(ResourceNotFoundException ex) {
+    } catch (ResourceNotFoundException ex) {
       throw new InvalidCredentialsException("Invalid credential");
     }
 
