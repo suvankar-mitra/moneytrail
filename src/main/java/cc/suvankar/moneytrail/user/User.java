@@ -29,7 +29,7 @@ public class User {
   @Column(name = "name", length = 100, nullable = false)
   private String name;
 
-  @Column(name = "email", nullable = false)
+  @Column(name = "email", nullable = false, unique = true)
   private String email;
 
   @Column(name = "password_hash", nullable = false)
