@@ -1,8 +1,6 @@
 package cc.suvankar.moneytrail.auth;
 
-import cc.suvankar.moneytrail.auth.dto.AuthResponse;
-import cc.suvankar.moneytrail.auth.dto.LoginRequest;
-import cc.suvankar.moneytrail.auth.dto.RegisterRequest;
+import cc.suvankar.moneytrail.auth.dto.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,5 +33,16 @@ public class AuthController {
     var authResponse = authService.loginUser(loginRequest);
     log.info("Authentication successful for user with email {}", loginRequest.getEmail());
     return ResponseEntity.ok(authResponse);
+  }
+
+  @PostMapping("/refresh")
+  public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+    return ResponseEntity.ok(authService.refreshTokens(request));
+  }
+
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest request) {
+    authService.logoutUser(request);
+    return ResponseEntity.noContent().build();
   }
 }

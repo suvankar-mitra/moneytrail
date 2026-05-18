@@ -201,6 +201,8 @@ The API is a standard REST API. Resources map to domains. All endpoints are pref
 ```
 POST   /api/v1/auth/register
 POST   /api/v1/auth/login
+POST   /api/v1/auth/refresh
+POST   /api/v1/auth/logout
 
 GET    /api/v1/accounts
 POST   /api/v1/accounts
@@ -345,6 +347,13 @@ The project is built in phases to keep each step focused and testable before mov
 - Multi-user linking (shared accounts, group expenses)
 - Inter-user transactions
 - Budgeting and alerts
+
+---
+
+## 9. Known Limitations
+- The application is designed as single session only. Any login attempt to another device will invalidate the current 
+active session. This can be mitigated later in the `Refresh Token` section under authentication by adding `device_id` 
+in the future.
 
 ---
 

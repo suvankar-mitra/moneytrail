@@ -58,4 +58,23 @@ public class GlobalExceptionHandler {
             new ErrorResponse(
                 "Operation failed due to a data integrity violation.", OffsetDateTime.now()));
   }
+
+  @ExceptionHandler(RefreshTokenExpiredException.class)
+  public ResponseEntity<ErrorResponse> handleRefreshTokenExpired(RefreshTokenExpiredException ex) {
+    log.warn("Refresh token has expired. {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(
+            new ErrorResponse(
+                "Refresh token is not valid. Please login again.", OffsetDateTime.now()));
+  }
+
+  @ExceptionHandler(RefreshTokenInvalidStateException.class)
+  public ResponseEntity<ErrorResponse> handleRefreshTokenInvalidState(
+      RefreshTokenInvalidStateException ex) {
+    log.warn("Refresh token is not in ACTIVE state. {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(
+            new ErrorResponse(
+                "Refresh token is not valid. Please login again.", OffsetDateTime.now()));
+  }
 }

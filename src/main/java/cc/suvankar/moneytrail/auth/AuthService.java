@@ -1,15 +1,15 @@
 package cc.suvankar.moneytrail.auth;
 
-import cc.suvankar.moneytrail.auth.dto.AuthResponse;
-import cc.suvankar.moneytrail.auth.dto.LoginRequest;
-import cc.suvankar.moneytrail.auth.dto.RegisterRequest;
+import cc.suvankar.moneytrail.auth.dto.*;
 import cc.suvankar.moneytrail.exception.EmailAlreadyExistsException;
 import cc.suvankar.moneytrail.exception.InvalidCredentialsException;
 import cc.suvankar.moneytrail.user.User;
 import cc.suvankar.moneytrail.user.UserRepository;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -18,12 +18,17 @@ public class AuthService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtUtil jwtUtil;
+  private final RefreshTokenService refreshTokenService;
 
   public AuthService(
-      UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      JwtUtil jwtUtil,
+      RefreshTokenService refreshTokenService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.jwtUtil = jwtUtil;
+    this.refreshTokenService = refreshTokenService;
   }
 
   public void registerUser(RegisterRequest registerRequest) {
@@ -66,13 +71,43 @@ public class AuthService {
       throw new InvalidCredentialsException("Invalid credentials.");
     }
 
-    // User exists and password hash matches
+    // User exists and password hash matches - generate JWT
     String token = jwtUtil.generateTokenWithUserId(foundUser.getEmail(), foundUser.getId());
 
-    // Return the response
+    // Generate refresh token
+    UUID refreshToken = refreshTokenService.createOrUpdateToken(foundUser.getId());
+
+    // Return the response (JWT + Refresh Token)
     AuthResponse authResponse = new AuthResponse();
     authResponse.setToken(token);
+    authResponse.setRefreshToken(refreshToken);
 
+    return authResponse;
+  }
+
+  public void logoutUser(LogoutRequest request) {
+    // Invalidate the refresh token
+    refreshTokenService.invalidateToken(request.refreshToken());
+  }
+
+  @Transactional
+  public AuthResponse refreshTokens(RefreshTokenRequest request) {
+    // Get existing refresh token
+    var refreshToken = refreshTokenService.getToken(request.refreshToken());
+
+    // Rotate the token now
+    UUID updatedRefreshToken =
+        refreshTokenService.createOrUpdateToken(refreshToken.getUser().getId());
+
+    // Generate JWT
+    String token =
+        jwtUtil.generateTokenWithUserId(
+            refreshToken.getUser().getEmail(), refreshToken.getUser().getId());
+
+    // Return the response (JWT + Refresh Token)
+    AuthResponse authResponse = new AuthResponse();
+    authResponse.setToken(token);
+    authResponse.setRefreshToken(updatedRefreshToken);
     return authResponse;
   }
 }

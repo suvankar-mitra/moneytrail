@@ -19,3 +19,5 @@ app:
     secret: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION:86400000}
 
+refresh_token:
+  validity_days: 30
