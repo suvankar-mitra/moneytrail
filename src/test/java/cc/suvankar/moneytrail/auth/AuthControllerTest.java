@@ -12,6 +12,7 @@ import cc.suvankar.moneytrail.exception.ErrorResponse;
 import cc.suvankar.moneytrail.exception.InvalidCredentialsException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +129,9 @@ public class AuthControllerTest {
                 }
                 """;
 
-    when(authService.loginUser(any())).thenReturn(new AuthResponse("dummy-jwt-token"));
+    UUID id = UUID.randomUUID();
+
+    when(authService.loginUser(any())).thenReturn(new AuthResponse("dummy-jwt-token", id));
 
     mockMvc
         .perform(post(loginBaseUrl).contentType(MediaType.APPLICATION_JSON).content(validJson))
@@ -139,6 +142,7 @@ public class AuthControllerTest {
               var authResponse = objectMapper.readValue(json, AuthResponse.class);
 
               assertThat(authResponse.getToken()).isEqualTo("dummy-jwt-token");
+              assertThat(authResponse.getRefreshToken()).isEqualByComparingTo(id);
             });
   }
 
