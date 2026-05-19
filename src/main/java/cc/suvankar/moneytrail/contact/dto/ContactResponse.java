@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContactResponse {
-  private UUID id;
+  private UUID contactId;
   private String name;
   private String email;
   private String phoneNo;
