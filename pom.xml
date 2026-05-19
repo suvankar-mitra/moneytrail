@@ -19,8 +19,6 @@
     <properties>
         <java.version>21</java.version>
         <jsonwebtoken.version>0.12.6</jsonwebtoken.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
     </properties>
     <dependencies>
 
@@ -108,16 +106,14 @@
 
     </dependencies>
 
-    <build>
-        <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
-
+<build>
         <plugins>
-            <!-- Java plugin for maven-compiler-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
+                    <release>21</release>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -125,38 +121,6 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
-                <executions>
-                    <!-- Disable default executions -->
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <!-- Java compile runs AFTER Kotlin -->
-                    <execution>
-                        <id>java-compile</id>
-                        <phase>compile</phase>
-                        <goals><goal>compile</goal></goals>
-                        <configuration>
-                            <compileSourceRoots>
-                                <compileSourceRoot>${project.basedir}/src/main/java</compileSourceRoot>
-                            </compileSourceRoots>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>java-test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals><goal>testCompile</goal></goals>
-                        <configuration>
-                            <compileSourceRoots>
-                                <compileSourceRoot>${project.basedir}/src/test/java</compileSourceRoot>
-                            </compileSourceRoots>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -176,9 +140,7 @@
                 <version>2.46.1</version>
                 <configuration>
                     <java>
-                        <!-- Formatter -->
                         <googleJavaFormat/>
-                        <!-- Remove unused imports -->
                         <removeUnusedImports/>
                         <trimTrailingWhitespace/>
                         <endWithNewline/>
@@ -199,5 +161,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
