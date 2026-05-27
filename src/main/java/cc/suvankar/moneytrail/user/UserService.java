@@ -1,6 +1,7 @@
 package cc.suvankar.moneytrail.user;
 
 import cc.suvankar.moneytrail.exception.ResourceNotFoundException;
+import cc.suvankar.moneytrail.user.dto.UserResponse;
 import java.util.UUID;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -19,5 +20,9 @@ public class UserService {
 
   public User getUserById(@NonNull UUID id) {
     return userRepository.findById(id).orElseThrow(ResourceNotFoundException::forUser);
+  }
+
+  public UserResponse getUserResponseById(@NonNull UUID id) {
+    return UserResponse.from(getUserById(id));
   }
 }
