@@ -33,6 +33,8 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/error")
                     .permitAll()
+                    .requestMatchers("/actuator/health")
+                    .permitAll()
                     .anyRequest()
                     .authenticated())
         .exceptionHandling(
