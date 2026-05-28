@@ -2,7 +2,7 @@
 
 > **Version:** v0.0.1  
 > **Stack:** Java 21 · Spring Boot 3 · PostgreSQL · Flyway · JWT · React (frontend, separate)  
-> **Last updated:** 2026-03
+> **Last updated:** 2026-05
 
 ---
 
