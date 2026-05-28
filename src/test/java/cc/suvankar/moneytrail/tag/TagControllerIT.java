@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -35,16 +34,11 @@ import org.springframework.test.web.servlet.MvcResult;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
 public class TagControllerIT {
-  @Autowired
-  UserRepository userRepository;
-  @Autowired
-  PasswordEncoder passwordEncoder;
-  @Autowired
-  JwtUtil jwtUtil;
-  @Autowired
-  MockMvc mockMvc;
-  @Autowired
-  ObjectMapper objectMapper;
+  @Autowired UserRepository userRepository;
+  @Autowired PasswordEncoder passwordEncoder;
+  @Autowired JwtUtil jwtUtil;
+  @Autowired MockMvc mockMvc;
+  @Autowired ObjectMapper objectMapper;
 
   private String user1Token;
   private String user2Token;
@@ -67,7 +61,8 @@ public class TagControllerIT {
 
     user2Token = jwtUtil.generateTokenWithUserId(user2.getEmail(), user2.getId());
 
-    String json = """
+    String json =
+        """
         {
             "tagName": "Food"
         }
@@ -79,7 +74,8 @@ public class TagControllerIT {
             .contentType(MediaType.APPLICATION_JSON)
             .content(json));
 
-    json = """
+    json =
+        """
         {
             "tagName": "Travel"
         }
@@ -93,7 +89,8 @@ public class TagControllerIT {
 
   @Test
   public void createTag_shouldReturn201AndTag_whenValidRequest() throws Exception {
-    String json = """
+    String json =
+        """
         {
             "tagName": "Shopping"
         }
@@ -112,14 +109,16 @@ public class TagControllerIT {
 
   @Test
   public void getTag_shouldReturn200AndTag_whenTagIsValid() throws Exception {
-    MvcResult result = mockMvc
-        .perform(
-            get("/api/v1/tags/Food")
-                .header("Authorization", "Bearer " + user1Token)
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andReturn();
-    TagResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), TagResponse.class);
+    MvcResult result =
+        mockMvc
+            .perform(
+                get("/api/v1/tags/Food")
+                    .header("Authorization", "Bearer " + user1Token)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn();
+    TagResponse response =
+        objectMapper.readValue(result.getResponse().getContentAsString(), TagResponse.class);
 
     assertThat(response).isNotNull();
     assertThat(response.tagId()).isNotNull();
@@ -128,15 +127,16 @@ public class TagControllerIT {
 
   @Test
   public void getTags_shouldReturn200AndTags_whenUserIsValid() throws Exception {
-    MvcResult result = mockMvc
-        .perform(
-            get("/api/v1/tags")
-                .header("Authorization", "Bearer " + user1Token)
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andReturn();
-    List<TagResponse> tags = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-    });
+    MvcResult result =
+        mockMvc
+            .perform(
+                get("/api/v1/tags")
+                    .header("Authorization", "Bearer " + user1Token)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn();
+    List<TagResponse> tags =
+        objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
 
     assertThat(tags).hasSize(2);
   }
@@ -181,7 +181,8 @@ public class TagControllerIT {
 
   @Test
   public void createTag_shouldReturn401_whenInvalidJwt() throws Exception {
-    String json = """
+    String json =
+        """
         {
             "tagName": "Shopping"
         }
