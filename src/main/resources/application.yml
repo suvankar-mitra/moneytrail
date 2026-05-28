@@ -17,7 +17,7 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET}
-    expiration: ${JWT_EXPIRATION:86400000}
+    expiration: ${JWT_EXPIRATION:900000}
 
 refresh_token:
   validity_days: 30
