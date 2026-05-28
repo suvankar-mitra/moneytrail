@@ -204,6 +204,8 @@ POST   /api/v1/auth/login
 POST   /api/v1/auth/refresh
 POST   /api/v1/auth/logout
 
+GET    /api/v1/users/me
+
 GET    /api/v1/accounts
 POST   /api/v1/accounts
 GET    /api/v1/accounts/{id}
@@ -223,8 +225,9 @@ PUT    /api/v1/contacts/{id}
 DELETE /api/v1/contacts/{id}
 
 GET    /api/v1/tags
+GET    /api/v1/tags/{name}
 POST   /api/v1/tags
-DELETE /api/v1/tags/{id}
+DELETE /api/v1/tags/{name}
 
 GET    /api/v1/dashboard/summary
 ```
@@ -354,6 +357,7 @@ The project is built in phases to keep each step focused and testable before mov
 - The application is designed as single session only. Any login attempt to another device will invalidate the current 
 active session. This can be mitigated later in the `Refresh Token` section under authentication by adding `device_id` 
 in the future.
+- Password reset is intentionally not implemented; admin resets passwords directly via DB in the current version.
 
 ---
 
