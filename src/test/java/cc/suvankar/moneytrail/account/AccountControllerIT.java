@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @AutoConfigureMockMvc
 @ActiveProfiles("test-h2")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
 public class AccountControllerIT {
 
   @Autowired private UserRepository userRepository;
@@ -50,7 +51,7 @@ public class AccountControllerIT {
   private UUID user1ContactId;
   private List<AccountResponse> accountResponseList;
 
-  @BeforeAll
+  @BeforeEach
   public void setup() throws Exception {
     log.info("Setting up Before all");
 
@@ -183,7 +184,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void createAccount_shouldReturn201_whenValidRequest() throws Exception {
     String validJson =
         """
@@ -211,7 +211,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void createAccount_shouldFail_whenContactDoesNotExist() throws Exception {
     String json =
         """
@@ -235,7 +234,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void createAccount_shouldFail_whenValidJWTOfNonexistingUser() throws Exception {
     String json =
         """
@@ -260,7 +258,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void getAccountById_shouldReturn200AndAccount_whenValidAccountId() throws Exception {
     UUID accountId = accountResponseList.getFirst().getAccountId();
 
@@ -274,7 +271,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void getAccounts_shouldReturn200AndListOfAccounts_whenValidUser() throws Exception {
 
     MvcResult mvcResult =
@@ -300,7 +296,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void getAccount_shouldReturn401_whenInvalidJWT() throws Exception {
     UUID accountId = accountResponseList.getFirst().getAccountId();
 
@@ -313,7 +308,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void getAccount_shouldReturn404_whenAccountIdDoesNotExist() throws Exception {
     mockMvc
         .perform(
@@ -324,7 +318,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void getAccount_shouldReturn404_whenAccountDoesNotBelongToUser() throws Exception {
     UUID accountId = accountResponseList.getFirst().getAccountId();
 
@@ -337,7 +330,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void updateAccount_shouldReturn200AndUpdateAccount_whenValidRequest() throws Exception {
     String validJson =
         """
@@ -365,7 +357,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void updateAccount_shouldReturn401_whenInvalidJWT() throws Exception {
     String validJson =
         """
@@ -391,7 +382,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void updateAccount_shouldReturn404_whenAccountIdDoesNotExist() throws Exception {
     String validJson =
         """
@@ -414,7 +404,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void updateAccount_shouldReturn404_whenAccountDoesNotBelongToUser() throws Exception {
     String validJson =
         """
@@ -438,7 +427,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void deleteAccount_shouldReturn200_whenValidRequest() throws Exception {
     UUID accountId = accountResponseList.getFirst().getAccountId();
 
@@ -454,7 +442,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void deleteAccount_shouldReturn401_whenInvalidJWT() throws Exception {
     UUID accountId = accountResponseList.getFirst().getAccountId();
 
@@ -466,7 +453,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void deleteAccount_shouldReturn404_whenAccountIdDoesNotExist() throws Exception {
     mockMvc
         .perform(
@@ -476,7 +462,6 @@ public class AccountControllerIT {
   }
 
   @Test
-  @Transactional
   public void deleteAccount_shouldReturn404_whenAccountIdDoesNotBelongToUser() throws Exception {
     UUID accountId = accountResponseList.getFirst().getAccountId();
 
