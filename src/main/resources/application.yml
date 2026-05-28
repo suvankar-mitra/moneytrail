@@ -21,3 +21,9 @@ app:
 
 refresh_token:
   validity_days: 30
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
