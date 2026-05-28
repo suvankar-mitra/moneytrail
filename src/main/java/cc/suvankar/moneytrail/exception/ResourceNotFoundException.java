@@ -16,4 +16,8 @@ public class ResourceNotFoundException extends RuntimeException {
   public static ResourceNotFoundException forUser() {
     return new ResourceNotFoundException("User not found.");
   }
+
+  public static ResourceNotFoundException forTag() {
+    return new ResourceNotFoundException("Tag not found.");
+  }
 }
