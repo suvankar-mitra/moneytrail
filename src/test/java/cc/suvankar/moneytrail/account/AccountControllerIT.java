@@ -435,10 +435,13 @@ public class AccountControllerIT {
             delete("/api/v1/accounts/" + accountId).header("Authorization", "Bearer " + user1Token))
         .andExpect(status().isOk());
 
+    // Account soft delete
     mockMvc
         .perform(
             get("/api/v1/accounts/" + accountId).header("Authorization", "Bearer " + user1Token))
-        .andExpect(status().isNotFound());
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value(accountResponseList.getFirst().getName()))
+        .andExpect(jsonPath("$.accountStatus").value(AccountStatus.DELETED.toString()));
   }
 
   @Test
