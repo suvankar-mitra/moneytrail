@@ -1,6 +1,6 @@
 CREATE TABLE contacts (
     id UUID PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL CONSTRAINT fk_contacts_user_id REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255),
     phone VARCHAR(20),

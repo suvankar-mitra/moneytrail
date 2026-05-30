@@ -1,7 +1,7 @@
 CREATE TABLE refresh_tokens(
-    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID CONSTRAINT pk_fk_refresh_tokens_user_id PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     token UUID UNIQUE NOT NULL,
     valid_from TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
     valid_to TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    token_state VARCHAR(10) NOT NULL CHECK(token_state IN ('ACTIVE','REVOKED'))
+    token_state VARCHAR(10) NOT NULL CONSTRAINT ck_refresh_tokens_token_state CHECK(token_state IN ('ACTIVE','REVOKED'))
 );
