@@ -58,6 +58,10 @@ public class Account {
   @Column(name = "is_virtual", nullable = false)
   private boolean virtual;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status", nullable = false)
+  private AccountStatus accountStatus = AccountStatus.ACTIVE;
+
   @CreatedDate
   @Column(name = "created_at", nullable = false, updatable = false)
   private OffsetDateTime createdAt;

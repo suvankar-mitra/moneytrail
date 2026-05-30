@@ -77,4 +77,15 @@ public class GlobalExceptionHandler {
             new ErrorResponse(
                 "Refresh token is not valid. Please login again.", OffsetDateTime.now()));
   }
+
+  @ExceptionHandler(AccountHasTransactionAssociatedException.class)
+  public ResponseEntity<ErrorResponse> handleAccountHasTransactionAssociatedException(
+      AccountHasTransactionAssociatedException ex) {
+    log.warn("Transactions present for this account - cannot modify.");
+    log.warn(ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(
+            new ErrorResponse(
+                "Transactions present for this account - cannot modify.", OffsetDateTime.now()));
+  }
 }
