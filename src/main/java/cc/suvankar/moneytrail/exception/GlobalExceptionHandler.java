@@ -88,4 +88,15 @@ public class GlobalExceptionHandler {
             new ErrorResponse(
                 "Transactions present for this account - cannot modify.", OffsetDateTime.now()));
   }
+
+  @ExceptionHandler(ExchangeRateFetchException.class)
+  public ResponseEntity<ErrorResponse> handleExchangeRateFetchException(
+      ExchangeRateFetchException ex) {
+    log.warn("Could not fetch the exchange rate from external APIs.");
+    log.warn(ex.getMessage());
+    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+        .body(
+            new ErrorResponse(
+                "Could not fetch the exchange rate from external APIs.", OffsetDateTime.now()));
+  }
 }
