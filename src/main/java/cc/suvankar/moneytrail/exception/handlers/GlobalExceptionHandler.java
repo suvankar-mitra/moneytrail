@@ -1,5 +1,6 @@
-package cc.suvankar.moneytrail.exception;
+package cc.suvankar.moneytrail.exception.handlers;
 
+import cc.suvankar.moneytrail.exception.*;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -98,5 +99,13 @@ public class GlobalExceptionHandler {
         .body(
             new ErrorResponse(
                 "Could not fetch the exchange rate from external APIs.", OffsetDateTime.now()));
+  }
+
+  @ExceptionHandler(AccountNotActiveException.class)
+  public ResponseEntity<ErrorResponse> handleAccountNotActiveException(
+      AccountNotActiveException ex) {
+    log.warn("Account is not active: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponse("Account is not active.", OffsetDateTime.now()));
   }
 }

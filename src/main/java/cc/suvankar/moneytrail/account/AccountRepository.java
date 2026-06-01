@@ -1,10 +1,18 @@
 package cc.suvankar.moneytrail.account;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccountRepository extends JpaRepository<Account, UUID> {
 
   List<Account> findByUserId(UUID userId);
+
+  Optional<Account> findByUserIdAndId(UUID userId, UUID id);
+
+  Optional<Account> findByUserIdAndTypeAndCurrency(
+      UUID userId, AccountType accountType, String currency);
+
+  List<Account> findByUserIdAndTypeNot(UUID userId, AccountType type);
 }

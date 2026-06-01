@@ -7,5 +7,6 @@ public enum AccountType {
   EXPENSE,
   INVESTMENT,
   RECEIVABLE,
-  PAYABLE
+  PAYABLE,
+  OPENING_BALANCE_EQUITY
 }

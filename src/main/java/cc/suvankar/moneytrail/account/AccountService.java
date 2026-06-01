@@ -11,6 +11,7 @@ import cc.suvankar.moneytrail.transaction.TransactionRepository;
 import cc.suvankar.moneytrail.user.User;
 import cc.suvankar.moneytrail.user.UserService;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -38,7 +39,8 @@ public class AccountService {
   }
 
   public List<AccountResponse> getAccountsByUserId(@NonNull UUID userId) {
-    var accounts = accountRepository.findByUserId(userId);
+    var accounts =
+        accountRepository.findByUserIdAndTypeNot(userId, AccountType.OPENING_BALANCE_EQUITY);
 
     return accounts.stream().map(AccountResponse::from).toList();
   }
@@ -53,12 +55,45 @@ public class AccountService {
       throw new InvalidCredentialsException("Invalid credential");
     }
 
-    Account account = new Account();
-    account.setUser(user);
-    account.setCurrency(accountRequest.getCurrency());
-    account.setName(accountRequest.getName());
-    account.setType(accountRequest.getAccountType());
-    account.setVirtual(accountRequest.isVirtual());
+    // Check account type ASSET/LIABILITY/INVESTMENT
+    // - create matching Opening Balance Account if does not exist
+    if (accountRequest.getAccountType() == AccountType.ASSET
+        || accountRequest.getAccountType() == AccountType.LIABILITY
+        || accountRequest.getAccountType() == AccountType.INVESTMENT) {
+      Optional<Account> foundAccountOptional =
+          accountRepository.findByUserIdAndTypeAndCurrency(
+              userId, AccountType.OPENING_BALANCE_EQUITY, accountRequest.getCurrency());
+
+      if (foundAccountOptional.isPresent()) {
+        log.info(
+            "Opening Balance Equity for user {} and currency {} is already present.",
+            userId,
+            accountRequest.getCurrency());
+      } else {
+        log.info(
+            "Creating a Opening Balance Equity account for user {} and currency {} ",
+            userId,
+            accountRequest.getCurrency());
+
+        Account openingBalanceEquityAccount =
+            createAccountObject(
+                user,
+                accountRequest.getCurrency(),
+                "Opening Balance Equity - " + accountRequest.getCurrency(),
+                AccountType.OPENING_BALANCE_EQUITY,
+                true);
+
+        accountRepository.save(openingBalanceEquityAccount);
+      }
+    }
+
+    Account account =
+        createAccountObject(
+            user,
+            accountRequest.getCurrency(),
+            accountRequest.getName(),
+            accountRequest.getAccountType(),
+            accountRequest.isVirtual());
 
     if (accountRequest.getAccountType() == AccountType.RECEIVABLE
         || accountRequest.getAccountType() == AccountType.PAYABLE) {
@@ -80,6 +115,18 @@ public class AccountService {
         response.getAccountType());
 
     return response;
+  }
+
+  private Account createAccountObject(
+      User user, String currency, String name, AccountType type, boolean isVirtual) {
+    Account account = new Account();
+    account.setUser(user);
+    account.setCurrency(currency);
+    account.setName(name);
+    account.setType(type);
+    account.setVirtual(isVirtual);
+
+    return account;
   }
 
   @Transactional(readOnly = true)
@@ -150,5 +197,12 @@ public class AccountService {
     accountRepository.save(account);
 
     log.info("Account {} deleted for user {}", accountId, userId);
+  }
+
+  @Transactional(readOnly = true)
+  public Account findAccountByUserIdAndAccountId(@NonNull UUID userId, @NonNull UUID accountId) {
+    return accountRepository
+        .findByUserIdAndId(userId, accountId)
+        .orElseThrow(ResourceNotFoundException::forAccount);
   }
 }
