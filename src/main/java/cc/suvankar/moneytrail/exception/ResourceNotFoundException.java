@@ -20,4 +20,8 @@ public class ResourceNotFoundException extends RuntimeException {
   public static ResourceNotFoundException forTag() {
     return new ResourceNotFoundException("Tag not found.");
   }
+
+  public static ResourceNotFoundException forTransaction() {
+    return new ResourceNotFoundException("Transaction not found.");
+  }
 }

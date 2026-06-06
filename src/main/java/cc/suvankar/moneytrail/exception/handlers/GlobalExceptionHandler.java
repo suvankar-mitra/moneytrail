@@ -116,4 +116,13 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorResponse(ex.getMessage(), OffsetDateTime.now()));
   }
+
+  @ExceptionHandler(TransactionFilterException.class)
+  public ResponseEntity<ErrorResponse> handleTransactionFilterException(
+      TransactionFilterException ex) {
+    log.warn("Transaction query filter exception for {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(
+            new ErrorResponse("Invalid Transaction query filter provided.", OffsetDateTime.now()));
+  }
 }

@@ -5,21 +5,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 import cc.suvankar.moneytrail.account.Account;
 import cc.suvankar.moneytrail.account.AccountRepository;
 import cc.suvankar.moneytrail.account.AccountType;
+import cc.suvankar.moneytrail.account.CurrencyCode;
 import cc.suvankar.moneytrail.config.JpaConfig;
 import cc.suvankar.moneytrail.user.User;
 import cc.suvankar.moneytrail.user.UserRepository;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @DataJpaTest
 @Import(JpaConfig.class)
+@Testcontainers
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 public class TransactionRepositoryTest {
+
+  @Container @ServiceConnection
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine");
 
   private User user;
   private Account fromAccount;
@@ -38,7 +50,7 @@ public class TransactionRepositoryTest {
     account.setUser(user);
     account.setName(name);
     account.setType(type);
-    account.setCurrency("INR");
+    account.setCurrency(CurrencyCode.valueOf("INR"));
     account.setVirtual(false);
     accountRepository.save(account);
 
@@ -59,8 +71,8 @@ public class TransactionRepositoryTest {
     transaction = new Transaction();
     transaction.setFromAccount(fromAccount);
     transaction.setToAccount(toAccount);
-    transaction.setTranDate(OffsetDateTime.now());
-    transaction.setAmount(new BigDecimal("122.92"));
+    transaction.setTranDate(LocalDate.now());
+    transaction.setTransactionAmount(new BigDecimal("122.92"));
     transactionRepository.save(transaction);
   }
 
@@ -82,6 +94,6 @@ public class TransactionRepositoryTest {
 
     // Assert
     assertThat(result).isNotEmpty();
-    assertThat(result.get().getAmount()).isEqualTo(new BigDecimal("122.92"));
+    assertThat(result.get().getTransactionAmount()).isEqualTo(new BigDecimal("122.92"));
   }
 }

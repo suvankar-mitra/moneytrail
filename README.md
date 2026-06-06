@@ -11,7 +11,7 @@ The domain model is designed with multi-user support in mind for future versions
 
 - Java 21
 - Spring Boot 3 (security, data, validation, Web, Jupiter Test)
-- PostgreSQL / H2 (for dev)
+- PostgreSQL
 - Flyway
 - JWT
 - Lombok
