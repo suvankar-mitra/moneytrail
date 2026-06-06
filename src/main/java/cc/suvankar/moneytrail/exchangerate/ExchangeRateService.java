@@ -52,6 +52,8 @@ public class ExchangeRateService {
                 "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@%s/v1/currencies/%s.json",
                 date.toString(), fromCurrency);
 
+        log.info(exchangeRateUrl);
+
         return fetchAndSaveExchangeRate(exchangeRateUrl, date, fromCurrency, toCurrency);
       } catch (Exception ex) {
         try {
@@ -64,6 +66,8 @@ public class ExchangeRateService {
               String.format(
                   "https://%s.currency-api.pages.dev/v1/currencies/%s.json",
                   date.toString(), fromCurrency);
+
+          log.info(exchangeRateUrl);
 
           return fetchAndSaveExchangeRate(exchangeRateUrl, date, fromCurrency, toCurrency);
 
