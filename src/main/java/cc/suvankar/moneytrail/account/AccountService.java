@@ -5,6 +5,7 @@ import cc.suvankar.moneytrail.account.dto.AccountResponse;
 import cc.suvankar.moneytrail.contact.ContactService;
 import cc.suvankar.moneytrail.exception.AccountHasTransactionAssociatedException;
 import cc.suvankar.moneytrail.exception.BadRequestException;
+import cc.suvankar.moneytrail.exception.IllegalCurrencyCodeException;
 import cc.suvankar.moneytrail.exception.InvalidCredentialsException;
 import cc.suvankar.moneytrail.exception.ResourceNotFoundException;
 import cc.suvankar.moneytrail.transaction.TransactionRepository;
@@ -62,7 +63,9 @@ public class AccountService {
         || accountRequest.getAccountType() == AccountType.INVESTMENT) {
       Optional<Account> foundAccountOptional =
           accountRepository.findByUserIdAndTypeAndCurrency(
-              userId, AccountType.OPENING_BALANCE_EQUITY, accountRequest.getCurrency());
+              userId,
+              AccountType.OPENING_BALANCE_EQUITY,
+              CurrencyCode.valueOf(accountRequest.getCurrency()));
 
       if (foundAccountOptional.isPresent()) {
         log.info(
@@ -117,11 +120,21 @@ public class AccountService {
     return response;
   }
 
+  private CurrencyCode getCurrencyCode(String currency) {
+    CurrencyCode currencyCode = CurrencyCode.sanitizeCurrency(currency);
+
+    if (currencyCode == null) {
+      throw new IllegalCurrencyCodeException("'" + currency + "'' is not a valid currency code.");
+    }
+
+    return currencyCode;
+  }
+
   private Account createAccountObject(
       User user, String currency, String name, AccountType type, boolean isVirtual) {
     Account account = new Account();
     account.setUser(user);
-    account.setCurrency(currency);
+    account.setCurrency(getCurrencyCode(currency));
     account.setName(name);
     account.setType(type);
     account.setVirtual(isVirtual);
@@ -168,7 +181,7 @@ public class AccountService {
     // Update the currency only if there is no associated xn
     // else throw error
     if (!transactionRepository.existsByFromAccountOrToAccount(account, account)) {
-      account.setCurrency(accountRequest.getCurrency());
+      account.setCurrency(getCurrencyCode(accountRequest.getCurrency()));
     } else {
       throw new AccountHasTransactionAssociatedException("Account: " + account.getId());
     }

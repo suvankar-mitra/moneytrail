@@ -3,6 +3,7 @@ package cc.suvankar.moneytrail.account.dto;
 import cc.suvankar.moneytrail.account.Account;
 import cc.suvankar.moneytrail.account.AccountStatus;
 import cc.suvankar.moneytrail.account.AccountType;
+import cc.suvankar.moneytrail.account.CurrencyCode;
 import cc.suvankar.moneytrail.exception.ResourceNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class AccountResponse {
   private UUID contactId;
   private String name;
   private AccountType accountType;
-  private String currency;
+  private CurrencyCode currency;
   private boolean virtual;
   private AccountStatus accountStatus;
   private OffsetDateTime createdAt;

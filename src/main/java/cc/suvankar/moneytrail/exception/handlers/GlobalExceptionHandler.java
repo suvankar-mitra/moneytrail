@@ -108,4 +108,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorResponse("Account is not active.", OffsetDateTime.now()));
   }
+
+  @ExceptionHandler(IllegalCurrencyCodeException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalCurrencyCodeException(
+      IllegalCurrencyCodeException ex) {
+    log.warn("Not a valid currency code {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponse(ex.getMessage(), OffsetDateTime.now()));
+  }
 }

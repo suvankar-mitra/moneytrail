@@ -52,8 +52,9 @@ public class Account {
   @Column(name = "type", nullable = false, length = 20)
   private AccountType type;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "currency", nullable = false, length = 3)
-  private String currency;
+  private CurrencyCode currency;
 
   @Column(name = "is_virtual", nullable = false)
   private boolean virtual;

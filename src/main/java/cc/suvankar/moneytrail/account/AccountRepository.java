@@ -12,7 +12,7 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
   Optional<Account> findByUserIdAndId(UUID userId, UUID id);
 
   Optional<Account> findByUserIdAndTypeAndCurrency(
-      UUID userId, AccountType accountType, String currency);
+      UUID userId, AccountType accountType, CurrencyCode currency);
 
   List<Account> findByUserIdAndTypeNot(UUID userId, AccountType type);
 }
