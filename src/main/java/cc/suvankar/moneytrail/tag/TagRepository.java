@@ -8,5 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TagRepository extends JpaRepository<Tag, Long> {
   List<Tag> findByUserId(UUID userId);
 
+  Optional<Tag> findByUserIdAndId(UUID userId, Long id);
+
   Optional<Tag> findByUserIdAndTagName(UUID userId, String tagName);
 }

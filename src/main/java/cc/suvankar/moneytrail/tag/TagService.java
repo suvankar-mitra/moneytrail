@@ -56,6 +56,12 @@ public class TagService {
     return TagResponse.from(foundTag);
   }
 
+  public Tag getTag(@NonNull UUID userId, @NonNull Long tagId) {
+    return repository
+        .findByUserIdAndId(userId, tagId)
+        .orElseThrow(ResourceNotFoundException::forTag);
+  }
+
   @Transactional(readOnly = true)
   public List<TagResponse> getAllTagResponses(@NonNull UUID userId) {
     List<Tag> foundTags = repository.findByUserId(userId);
