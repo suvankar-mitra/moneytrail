@@ -11,12 +11,22 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.*;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.testcontainers.service.connection.*;
 import org.springframework.context.annotation.Import;
+import org.testcontainers.containers.*;
+import org.testcontainers.junit.jupiter.*;
+import org.testcontainers.junit.jupiter.Container;
 
 @DataJpaTest
 @Import(JpaConfig.class)
+@Testcontainers
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TagRepositoryTest {
+
+  @Container @ServiceConnection
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine");
 
   private User user;
   private Tag tag;
