@@ -15,4 +15,9 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
       UUID userId, AccountType accountType, CurrencyCode currency);
 
   List<Account> findByUserIdAndTypeNot(UUID userId, AccountType type);
+
+  List<Account> findByUserIdAndVirtualFalse(UUID userId);
+
+  List<Account> findByUserIdAndCurrencyAndVirtual(
+      UUID userId, CurrencyCode currency, boolean virtual);
 }

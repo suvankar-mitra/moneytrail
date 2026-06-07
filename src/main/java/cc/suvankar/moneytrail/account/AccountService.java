@@ -41,19 +41,17 @@ public class AccountService {
 
   public List<AccountResponse> getAccountsByUserId(@NonNull UUID userId) {
     var accounts =
-        accountRepository.findByUserIdAndTypeNot(userId, AccountType.OPENING_BALANCE_EQUITY);
+        accountRepository.findByUserIdAndVirtualFalse(userId);
 
     return accounts.stream().map(AccountResponse::from).toList();
   }
 
-  public AccountResponse getOpeningBalanceEquityAccountByCurrency(
-      @NonNull UUID userId, String currency) {
-    var account =
-        accountRepository
-            .findByUserIdAndTypeAndCurrency(
-                userId, AccountType.OPENING_BALANCE_EQUITY, getCurrencyCode(currency))
-            .orElseThrow(ResourceNotFoundException::forAccount);
-    return AccountResponse.from(account);
+  public List<AccountResponse> getVirtualAccountsByCurrency(@NonNull UUID userId, String currency) {
+    return accountRepository
+        .findByUserIdAndCurrencyAndVirtual(userId, getCurrencyCode(currency), true)
+        .stream()
+        .map(AccountResponse::from)
+        .toList();
   }
 
   @Transactional
@@ -67,36 +65,20 @@ public class AccountService {
     }
 
     // Check account type ASSET/LIABILITY/INVESTMENT
-    // - create matching Opening Balance Account if does not exist
-    if (accountRequest.getAccountType() == AccountType.ASSET
-        || accountRequest.getAccountType() == AccountType.LIABILITY
-        || accountRequest.getAccountType() == AccountType.INVESTMENT) {
-      Optional<Account> foundAccountOptional =
-          accountRepository.findByUserIdAndTypeAndCurrency(
-              userId,
-              AccountType.OPENING_BALANCE_EQUITY,
-              CurrencyCode.valueOf(accountRequest.getCurrency()));
-
-      if (foundAccountOptional.isPresent()) {
-        log.info(
-            "Opening Balance Equity for user {} and currency {} is already present.",
-            userId,
-            accountRequest.getCurrency());
-      } else {
-        log.info(
-            "Creating a Opening Balance Equity account for user {} and currency {} ",
-            userId,
-            accountRequest.getCurrency());
-
-        Account openingBalanceEquityAccount =
-            createAccountObject(
-                user,
-                accountRequest.getCurrency(),
-                "Opening Balance Equity - " + accountRequest.getCurrency(),
-                AccountType.OPENING_BALANCE_EQUITY,
-                true);
-
-        accountRepository.save(openingBalanceEquityAccount);
+    // - create matching Opening Balance Account / Income Account / Expense Account if it does not
+    // exist
+    switch (accountRequest.getAccountType()) {
+      case ASSET -> {
+        createVirtualAccount(user, accountRequest, AccountType.OPENING_BALANCE_EQUITY);
+        createVirtualAccount(user, accountRequest, AccountType.INCOME);
+        createVirtualAccount(user, accountRequest, AccountType.EXPENSE);
+      }
+      case LIABILITY -> {
+        createVirtualAccount(user, accountRequest, AccountType.OPENING_BALANCE_EQUITY);
+        createVirtualAccount(user, accountRequest, AccountType.EXPENSE);
+      }
+      case INVESTMENT -> {
+        createVirtualAccount(user, accountRequest, AccountType.OPENING_BALANCE_EQUITY);
       }
     }
 
@@ -128,6 +110,37 @@ public class AccountService {
         response.getAccountType());
 
     return response;
+  }
+
+  private void createVirtualAccount(
+      @NonNull User user, @NonNull AccountRequest accountRequest, AccountType type) {
+    Optional<Account> foundAccountOptional =
+        accountRepository.findByUserIdAndTypeAndCurrency(
+            user.getId(), type, CurrencyCode.valueOf(accountRequest.getCurrency()));
+
+    if (foundAccountOptional.isPresent()) {
+      log.info(
+          "{} account for user {} and currency {} is already present.",
+          type.name(),
+          user.getId(),
+          accountRequest.getCurrency());
+    } else {
+      log.info(
+          "Creating an {} account for user {} and currency {} ",
+          type.name(),
+          user.getId(),
+          accountRequest.getCurrency());
+
+      Account virtualAccount =
+          createAccountObject(
+              user,
+              accountRequest.getCurrency(),
+              type.name() + " - " + accountRequest.getCurrency(),
+              type,
+              true);
+
+      accountRepository.save(virtualAccount);
+    }
   }
 
   private CurrencyCode getCurrencyCode(String currency) {
