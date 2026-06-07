@@ -60,6 +60,7 @@ public class AccountControllerIT {
   private String user2Token;
   private UUID user1ContactId;
   private List<AccountResponse> accountResponseList;
+  private List<AccountResponse> virtualAccountResponseList;
 
   @BeforeEach
   public void setup() throws Exception {
@@ -145,6 +146,19 @@ public class AccountControllerIT {
     accountResponseList.add(
         objectMapper.readValue(
             mvcResult.getResponse().getContentAsString(), AccountResponse.class));
+
+    mvcResult =
+        mockMvc
+            .perform(
+                get("/api/v1/accounts/virtual?currency=INR")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + user1Token))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    virtualAccountResponseList =
+        objectMapper.readValue(
+            mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
 
     // USER 2
     var user2 = new User();
@@ -303,6 +317,27 @@ public class AccountControllerIT {
     assertThat(listOfObjects.stream().map(AccountResponse::getAccountId).toList())
         .containsExactlyInAnyOrderElementsOf(
             accountResponseList.stream().map(AccountResponse::getAccountId).toList());
+  }
+
+  @Test
+  public void getVirtualAccounts_shouldReturn200AndListOfVirtualAccounts_whenValidUser()
+      throws Exception {
+    MvcResult mvcResult =
+        mockMvc
+            .perform(
+                get("/api/v1/accounts/virtual?currency=INR")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + user1Token))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    List<AccountResponse> listOfObjects =
+        objectMapper.readValue(
+            mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+
+    assertThat(listOfObjects).hasSize(3);
+    assertThat(listOfObjects.stream().map(AccountResponse::getAccountType).toList())
+        .containsExactlyInAnyOrderElementsOf(virtualAccountResponseList.stream().map(AccountResponse::getAccountType).toList());
   }
 
   @Test
@@ -482,5 +517,41 @@ public class AccountControllerIT {
         .perform(
             delete("/api/v1/accounts/" + accountId).header("Authorization", "Bearer " + user2Token))
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void deleteAccount_shouldReturn400_whenAccountIsVirtual() throws Exception {
+    AccountResponse response = virtualAccountResponseList.getFirst();
+
+    mockMvc
+        .perform(
+            delete("/api/v1/accounts/" + response.getAccountId())
+                .header("Authorization", "Bearer " + user1Token))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void updateAccount_shouldReturn400_whenAccountIsVirtual() throws Exception {
+    AccountResponse response = virtualAccountResponseList.getFirst();
+
+    String validJson =
+        """
+                {
+                  "contactId": null,
+                  "name": "Contact's account",
+                  "accountType": "ASSET",
+                  "currency": "INR",
+                  "virtual": false
+                }
+                """;
+    UUID accountId = response.getAccountId();
+
+    mockMvc
+        .perform(
+            put("/api/v1/accounts/" + accountId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(validJson)
+                .header("Authorization", "Bearer " + user1Token))
+        .andExpect(status().isBadRequest());
   }
 }
