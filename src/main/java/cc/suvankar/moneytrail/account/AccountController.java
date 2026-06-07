@@ -44,8 +44,7 @@ public class AccountController {
 
     log.info("Getting all Virtual Accounts({}) for User {}", currency, userId);
 
-    return ResponseEntity.ok(
-        accountService.getVirtualAccountsByCurrency(userId, currency));
+    return ResponseEntity.ok(accountService.getVirtualAccountsByCurrency(userId, currency));
   }
 
   @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)

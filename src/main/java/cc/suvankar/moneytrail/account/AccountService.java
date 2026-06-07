@@ -40,8 +40,7 @@ public class AccountService {
   }
 
   public List<AccountResponse> getAccountsByUserId(@NonNull UUID userId) {
-    var accounts =
-        accountRepository.findByUserIdAndVirtualFalse(userId);
+    var accounts = accountRepository.findByUserIdAndVirtualFalse(userId);
 
     return accounts.stream().map(AccountResponse::from).toList();
   }
@@ -77,9 +76,8 @@ public class AccountService {
         createVirtualAccount(user, accountRequest, AccountType.OPENING_BALANCE_EQUITY);
         createVirtualAccount(user, accountRequest, AccountType.EXPENSE);
       }
-      case INVESTMENT -> {
-        createVirtualAccount(user, accountRequest, AccountType.OPENING_BALANCE_EQUITY);
-      }
+      case INVESTMENT ->
+          createVirtualAccount(user, accountRequest, AccountType.OPENING_BALANCE_EQUITY);
     }
 
     Account account =
