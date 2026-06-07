@@ -54,13 +54,13 @@ public class TransactionService {
     // Get from-account
     var fromAccount =
         accountService.findAccountByUserIdAndAccountId(userId, request.fromAccountId());
-    if (!isAccountActive(fromAccount)) {
+    if (isAccountInactive(fromAccount)) {
       throw new AccountNotActiveException(fromAccount.getId().toString());
     }
 
     // Get to-account
     var toAccount = accountService.findAccountByUserIdAndAccountId(userId, request.toAccountId());
-    if (!isAccountActive(toAccount)) {
+    if (isAccountInactive(toAccount)) {
       throw new AccountNotActiveException(toAccount.getId().toString());
     }
 
@@ -134,8 +134,7 @@ public class TransactionService {
       spec = spec.and(byDateRange(filter.startDate(), filter.endDate()));
     }
     // one of the dates is null
-    else if ((filter.startDate() != null && filter.endDate() == null)
-        || (filter.startDate() == null && filter.endDate() != null)) {
+    else if (filter.startDate() != null || filter.endDate() != null) {
       throw new TransactionFilterException(
           "Both start date and end date are required if either one is provided.");
     } else {
@@ -165,8 +164,8 @@ public class TransactionService {
         .collect(Collectors.toSet());
   }
 
-  private boolean isAccountActive(Account account) {
-    return account.getAccountStatus() == AccountStatus.ACTIVE;
+  private boolean isAccountInactive(Account account) {
+    return account.getAccountStatus() != AccountStatus.ACTIVE;
   }
 
   private BigDecimal getExchangeRate(LocalDate date, Account fromAccount, Account toAccount) {
