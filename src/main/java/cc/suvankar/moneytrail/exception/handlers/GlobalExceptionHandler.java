@@ -125,4 +125,12 @@ public class GlobalExceptionHandler {
         .body(
             new ErrorResponse("Invalid Transaction query filter provided.", OffsetDateTime.now()));
   }
+
+  @ExceptionHandler(AccountModificationNotAllowedException.class)
+  public ResponseEntity<ErrorResponse> handleAccountModificationNotAllowedException(
+      AccountModificationNotAllowedException ex) {
+    log.warn("This account cannot be modified: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponse("This account cannot be modified.", OffsetDateTime.now()));
+  }
 }

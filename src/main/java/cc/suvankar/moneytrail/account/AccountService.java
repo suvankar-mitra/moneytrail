@@ -3,11 +3,7 @@ package cc.suvankar.moneytrail.account;
 import cc.suvankar.moneytrail.account.dto.AccountRequest;
 import cc.suvankar.moneytrail.account.dto.AccountResponse;
 import cc.suvankar.moneytrail.contact.ContactService;
-import cc.suvankar.moneytrail.exception.AccountHasTransactionAssociatedException;
-import cc.suvankar.moneytrail.exception.BadRequestException;
-import cc.suvankar.moneytrail.exception.IllegalCurrencyCodeException;
-import cc.suvankar.moneytrail.exception.InvalidCredentialsException;
-import cc.suvankar.moneytrail.exception.ResourceNotFoundException;
+import cc.suvankar.moneytrail.exception.*;
 import cc.suvankar.moneytrail.transaction.TransactionRepository;
 import cc.suvankar.moneytrail.user.User;
 import cc.suvankar.moneytrail.user.UserService;
@@ -188,6 +184,11 @@ public class AccountService {
       throw ResourceNotFoundException.forAccount();
     }
 
+    // If account is virtual - throw exception
+    if (account.isVirtual()) {
+      throw new AccountModificationNotAllowedException(accountId.toString());
+    }
+
     // Update fields
     if (accountRequest.getAccountType() == AccountType.RECEIVABLE
         || accountRequest.getAccountType() == AccountType.PAYABLE) {
@@ -226,6 +227,11 @@ public class AccountService {
 
     if (!account.getUser().getId().equals(userId)) {
       throw ResourceNotFoundException.forAccount();
+    }
+
+    // If account is virtual - throw exception
+    if (account.isVirtual()) {
+      throw new AccountModificationNotAllowedException(accountId.toString());
     }
 
     // Soft delete the account
