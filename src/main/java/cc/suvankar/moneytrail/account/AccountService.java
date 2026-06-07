@@ -46,6 +46,16 @@ public class AccountService {
     return accounts.stream().map(AccountResponse::from).toList();
   }
 
+  public AccountResponse getOpeningBalanceEquityAccountByCurrency(
+      @NonNull UUID userId, String currency) {
+    var account =
+        accountRepository
+            .findByUserIdAndTypeAndCurrency(
+                userId, AccountType.OPENING_BALANCE_EQUITY, getCurrencyCode(currency))
+            .orElseThrow(ResourceNotFoundException::forAccount);
+    return AccountResponse.from(account);
+  }
+
   @Transactional
   public AccountResponse createAccount(
       @NonNull UUID userId, @NonNull AccountRequest accountRequest) {
@@ -180,10 +190,12 @@ public class AccountService {
 
     // Update the currency only if there is no associated xn
     // else throw error
-    if (!transactionRepository.existsByFromAccountOrToAccount(account, account)) {
-      account.setCurrency(getCurrencyCode(accountRequest.getCurrency()));
-    } else {
-      throw new AccountHasTransactionAssociatedException("Account: " + account.getId());
+    if (!getCurrencyCode(accountRequest.getCurrency()).equals(account.getCurrency())) {
+      if (!transactionRepository.existsByFromAccountOrToAccount(account, account)) {
+        account.setCurrency(getCurrencyCode(accountRequest.getCurrency()));
+      } else {
+        throw new AccountHasTransactionAssociatedException("Account: " + account.getId());
+      }
     }
 
     account.setVirtual(accountRequest.isVirtual());
