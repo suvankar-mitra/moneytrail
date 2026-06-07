@@ -36,16 +36,16 @@ public class AccountController {
     return ResponseEntity.ok(accountService.getAccountsByUserId(userId));
   }
 
-  @GetMapping(value = "/accounts/opening_balance_equity")
-  public ResponseEntity<AccountResponse> getOpeningBalanceEquityAccountByCurrency(
+  @GetMapping(value = "/accounts/virtual")
+  public ResponseEntity<List<AccountResponse>> getVirtualAccountsByCurrency(
       @NonNull @AuthenticationPrincipal UserPrincipal userPrincipal,
       @RequestParam("currency") String currency) {
     var userId = userPrincipal.userId();
 
-    log.info("Getting OPENING_BALANCE_EQUITY({}) accounts for User {}", currency, userId);
+    log.info("Getting all Virtual Accounts({}) for User {}", currency, userId);
 
     return ResponseEntity.ok(
-        accountService.getOpeningBalanceEquityAccountByCurrency(userId, currency));
+        accountService.getVirtualAccountsByCurrency(userId, currency));
   }
 
   @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
