@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.annotations.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -54,6 +54,7 @@ public class Transaction {
       name = "transaction_tags",
       joinColumns = @JoinColumn(name = "transaction_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  @BatchSize(size = 25)
   private Set<Tag> tags = new HashSet<>();
 
   @Column(name = "transaction_amount", nullable = false, precision = 19, scale = 4)
