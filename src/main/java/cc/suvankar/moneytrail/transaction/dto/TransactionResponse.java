@@ -1,6 +1,5 @@
 package cc.suvankar.moneytrail.transaction.dto;
 
-import cc.suvankar.moneytrail.account.dto.AccountResponse;
 import cc.suvankar.moneytrail.tag.dto.TagResponse;
 import cc.suvankar.moneytrail.transaction.Transaction;
 import java.math.BigDecimal;
@@ -11,8 +10,8 @@ import java.util.stream.Collectors;
 
 public record TransactionResponse(
     UUID transactionId,
-    AccountResponse fromAccount,
-    AccountResponse toAccount,
+    UUID fromAccount,
+    UUID toAccount,
     BigDecimal transactionAmount,
     BigDecimal effectiveAmount,
     BigDecimal exchangeRate,
@@ -22,8 +21,8 @@ public record TransactionResponse(
   public static TransactionResponse from(Transaction tran) {
     return new TransactionResponse(
         tran.getId(),
-        AccountResponse.from(tran.getFromAccount()),
-        AccountResponse.from(tran.getToAccount()),
+        tran.getFromAccount().getId(),
+        tran.getToAccount().getId(),
         tran.getTransactionAmount(),
         tran.getTransactionAmount().multiply(tran.getExchangeRate()),
         tran.getExchangeRate(),
