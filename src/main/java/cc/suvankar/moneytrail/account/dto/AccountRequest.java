@@ -26,6 +26,4 @@ public class AccountRequest {
   @NotBlank(message = "Currency is required.")
   @Size(min = 3, max = 3, message = "Currency should be 3 chars e.g. INR.")
   private String currency;
-
-  private boolean virtual;
 }

@@ -109,8 +109,7 @@ public class AccountControllerIT {
                   "contactId": null,
                   "name": "Primary Savings Account",
                   "accountType": "ASSET",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """;
     mvcResult =
@@ -131,8 +130,7 @@ public class AccountControllerIT {
                   "contactId": null,
                   "name": "Secondary Savings Account",
                   "accountType": "ASSET",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """;
     mvcResult =
@@ -194,8 +192,7 @@ public class AccountControllerIT {
                   "contactId": null,
                   "name": "Bank Account",
                   "accountType": "ASSET",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """;
     mockMvc.perform(
@@ -215,8 +212,7 @@ public class AccountControllerIT {
                   "contactId": "%s",
                   "name": "Primary Savings Account",
                   "accountType": "PAYABLE",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """
             .formatted(user1ContactId.toString());
@@ -242,8 +238,7 @@ public class AccountControllerIT {
                   "contactId": "%s",
                   "name": "Test",
                   "accountType": "PAYABLE",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """
             .formatted(UUID.randomUUID());
@@ -265,8 +260,7 @@ public class AccountControllerIT {
                   "contactId": null,
                   "name": "Test",
                   "accountType": "ASSET",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """;
 
@@ -337,7 +331,8 @@ public class AccountControllerIT {
 
     assertThat(listOfObjects).hasSize(3);
     assertThat(listOfObjects.stream().map(AccountResponse::getAccountType).toList())
-        .containsExactlyInAnyOrderElementsOf(virtualAccountResponseList.stream().map(AccountResponse::getAccountType).toList());
+        .containsExactlyInAnyOrderElementsOf(
+            virtualAccountResponseList.stream().map(AccountResponse::getAccountType).toList());
   }
 
   @Test
@@ -382,8 +377,7 @@ public class AccountControllerIT {
                   "contactId": "%s",
                   "name": "Contact's account",
                   "accountType": "PAYABLE",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """
             .formatted(user1ContactId);
@@ -409,8 +403,7 @@ public class AccountControllerIT {
                   "contactId": "%s",
                   "name": "Contact's account",
                   "accountType": "PAYABLE",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """
             .formatted(user1ContactId);
@@ -434,8 +427,7 @@ public class AccountControllerIT {
                   "contactId": null,
                   "name": "Contact's account",
                   "accountType": "ASSET",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """;
 
@@ -456,8 +448,7 @@ public class AccountControllerIT {
                   "contactId": null,
                   "name": "Contact's account",
                   "accountType": "ASSET",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """;
     UUID accountId = accountResponseList.getFirst().getAccountId();
@@ -540,8 +531,7 @@ public class AccountControllerIT {
                   "contactId": null,
                   "name": "Contact's account",
                   "accountType": "ASSET",
-                  "currency": "INR",
-                  "virtual": false
+                  "currency": "INR"
                 }
                 """;
     UUID accountId = response.getAccountId();

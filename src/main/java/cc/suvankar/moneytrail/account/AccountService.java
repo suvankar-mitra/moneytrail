@@ -82,7 +82,7 @@ public class AccountService {
             accountRequest.getCurrency(),
             accountRequest.getName(),
             accountRequest.getAccountType(),
-            accountRequest.isVirtual());
+            false);
 
     if (accountRequest.getAccountType() == AccountType.RECEIVABLE
         || accountRequest.getAccountType() == AccountType.PAYABLE) {
@@ -210,7 +210,6 @@ public class AccountService {
       }
     }
 
-    account.setVirtual(accountRequest.isVirtual());
     account.setName(accountRequest.getName());
 
     accountRepository.save(account);
