@@ -1,6 +1,6 @@
 package cc.suvankar.moneytrail.transaction.dto;
 
-import cc.suvankar.moneytrail.tag.dto.TagResponse;
+import cc.suvankar.moneytrail.tag.*;
 import cc.suvankar.moneytrail.transaction.Transaction;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ public record TransactionResponse(
     BigDecimal transactionAmount,
     BigDecimal effectiveAmount,
     BigDecimal exchangeRate,
-    Set<TagResponse> tags,
+    Set<Long> tagIdSet,
     LocalDate tranDate,
     String note) {
   public static TransactionResponse from(Transaction tran) {
@@ -26,7 +26,7 @@ public record TransactionResponse(
         tran.getTransactionAmount(),
         tran.getTransactionAmount().multiply(tran.getExchangeRate()),
         tran.getExchangeRate(),
-        tran.getTags().stream().map(TagResponse::from).collect(Collectors.toSet()),
+        tran.getTags().stream().map(Tag::getId).collect(Collectors.toSet()),
         tran.getTranDate(),
         tran.getNote());
   }
