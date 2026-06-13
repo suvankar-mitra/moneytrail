@@ -1,6 +1,7 @@
 package cc.suvankar.moneytrail.transaction.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,5 +15,7 @@ public record TransactionRequest(
         @Positive(message = "transactionAmount must be Positive.")
         BigDecimal transactionAmount,
     @NotNull(message = "tagIdSet cannot be null.") Set<Long> tagIdSet,
-    @NotNull(message = "tranDate is required.") LocalDate tranDate,
+    @NotNull(message = "tranDate is required.")
+        @PastOrPresent(message = "tranDate cannot be in the future.")
+        LocalDate tranDate,
     String note) {}
