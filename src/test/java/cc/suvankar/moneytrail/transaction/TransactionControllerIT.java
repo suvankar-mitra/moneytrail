@@ -403,7 +403,9 @@ public class TransactionControllerIT {
           "note": ""
         }
         """,
-            user1AccountList.getFirst().getAccountId(), UUID.randomUUID(), LocalDate.of(2026, 01, 12));
+            user1AccountList.getFirst().getAccountId(),
+            UUID.randomUUID(),
+            LocalDate.of(2026, 01, 12));
 
     mockMvc
         .perform(
@@ -748,11 +750,10 @@ public class TransactionControllerIT {
   }
 
   @Test
-  public void getTransactions_shouldReturn200AndEmptyList_whenUserDoesNotHaveTransaction() throws Exception {
+  public void getTransactions_shouldReturn200AndEmptyList_whenUserDoesNotHaveTransaction()
+      throws Exception {
     mockMvc
-        .perform(
-            get("/api/v1/transactions")
-                .header("Authorization", "Bearer " + user2token))
+        .perform(get("/api/v1/transactions").header("Authorization", "Bearer " + user2token))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content").isArray())
         .andExpect(jsonPath("$.content", hasSize(0)))

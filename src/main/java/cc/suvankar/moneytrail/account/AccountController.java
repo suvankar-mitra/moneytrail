@@ -4,7 +4,6 @@ import cc.suvankar.moneytrail.account.dto.AccountRequest;
 import cc.suvankar.moneytrail.account.dto.AccountResponse;
 import cc.suvankar.moneytrail.user.UserPrincipal;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.*;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
