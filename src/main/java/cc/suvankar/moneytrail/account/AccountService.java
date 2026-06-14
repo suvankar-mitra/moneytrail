@@ -74,6 +74,9 @@ public class AccountService {
       }
       case INVESTMENT ->
           createVirtualAccount(user, accountRequest, AccountType.OPENING_BALANCE_EQUITY);
+      default -> {
+        throw new AccountCreationForInvalidAccountTypeException(accountRequest.getAccountType().name());
+      }
     }
 
     Account account =

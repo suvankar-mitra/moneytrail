@@ -133,4 +133,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorResponse("This account cannot be modified.", OffsetDateTime.now()));
   }
+
+  @ExceptionHandler(AccountCreationForInvalidAccountTypeException.class)
+  public ResponseEntity<ErrorResponse> handleAccountCreationForInvalidAccountTypeException(
+      AccountCreationForInvalidAccountTypeException ex) {
+    log.warn("Invalid account type requested: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponse("Invalid account type requested.", OffsetDateTime.now()));
+  }
 }
