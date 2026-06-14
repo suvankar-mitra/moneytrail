@@ -7,9 +7,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.*;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.lang.*;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public interface TransactionRepository
     extends JpaRepository<Transaction, UUID>, JpaSpecificationExecutor<Transaction> {
   boolean existsByFromAccountOrToAccount(Account fromAccount, Account toAccount);
