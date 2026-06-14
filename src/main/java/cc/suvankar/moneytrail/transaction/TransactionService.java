@@ -165,16 +165,13 @@ public class TransactionService {
 
   private BigDecimal getExchangeRate(LocalDate date, Account fromAccount, Account toAccount) {
     // If same currency, exchange rate is 1.0
-    if (fromAccount.getCurrency().equals(toAccount.getCurrency())) {
+    if (fromAccount.getCurrency() == toAccount.getCurrency()) {
       return BigDecimal.ONE;
     }
 
     // Fetch and return exchange rate
     return exchangeRateService
-        .getExchangeRate(
-            date,
-            fromAccount.getCurrency().toString().toLowerCase(),
-            toAccount.getCurrency().toString().toLowerCase())
+        .getExchangeRate(date, fromAccount.getCurrency().name(), toAccount.getCurrency().name())
         .getExchangeRate();
   }
 }
