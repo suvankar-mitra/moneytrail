@@ -21,9 +21,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -137,9 +135,6 @@ public class TransactionService {
     else if (filter.startDate() != null || filter.endDate() != null) {
       throw new TransactionFilterException(
           "Both start date and end date are required if either one is provided.");
-    } else {
-      // both dates are null
-      pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
     }
 
     return repository.findAll(spec, pageable).map(TransactionResponse::from);
