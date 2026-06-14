@@ -28,7 +28,7 @@ Under active development — v0.0.1
 | Accounts     | Implemented & tested ||
 | Contacts     | Implemented & tested ||
 | Tags         | Implemented & tested ||
-| Transactions | Planned              ||
+| Transactions | Implemented & tested ||
 | Dashboard    | Planned              ||
 
 ## How to run
